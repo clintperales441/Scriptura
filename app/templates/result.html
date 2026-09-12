@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+
+{% block title %}Scriptura — Result{% endblock %}
+
+{% block content %}
+<section class="result-page">
+    <h1>Session Complete! 🎉</h1>
+
+    <div class="result-stats">
+        <div class="stat-card">
+            <span class="stat-number">{{ session.original_word_count }}</span>
+            <span class="stat-label">Original Words</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-number">{{ session.rewrite_word_count }}</span>
+            <span class="stat-label">Rewrite Words</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-number">{{ session.mistakes | length }}</span>
+            <span class="stat-label">Issues Found</span>
+        </div>
+    </div>
+
+    <div class="result-comparison">
+        <div class="result-text">
+            <h2>Original</h2>
+            <div class="text-display">{{ session.original_text }}</div>
+        </div>
+        <div class="result-text">
+            <h2>Rewrite</h2>
+            <div class="text-display">{{ session.rewritten_text }}</div>
+        </div>
+    </div>
+
+    <div class="result-prompt">
+        <h3>Prompt</h3>
+        <p>{{ session.prompt.text }}</p>
+        <p class="meta">{{ session.category }} · {{ session.difficulty }}</p>
+    </div>
+
+    <div class="result-actions">
+        <a href="/practice/setup" class="btn btn-primary">Practice Again</a>
+        <a href="/" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
+</section>
+{% endblock %}

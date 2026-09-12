@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+
+{% block title %}Scriptura — Writing{% endblock %}
+
+{% block content %}
+<section class="practice-page">
+    <div class="practice-header">
+        <div class="practice-meta">
+            <span class="badge badge-category">{{ session.category }}</span>
+            <span class="badge badge-difficulty">{{ session.difficulty }}</span>
+        </div>
+        <div class="timer" id="timer">{{ session.timer_minutes }}:00</div>
+    </div>
+
+    <div class="prompt-card">
+        <h2>Your Prompt</h2>
+        <p class="prompt-text">{{ session.prompt.text }}</p>
+    </div>
+
+    <form action="/practice/submit" method="post" id="writing-form">
+        <input type="hidden" name="session_id" value="{{ session.id }}">
+
+        <div class="writing-area">
+            <textarea
+                name="writing"
+                id="writing-input"
+                placeholder="Start writing here..."
+                rows="12"
+                required
+            ></textarea>
+        </div>
+
+        <div class="writing-footer">
+            <span class="word-count">Words: <strong id="word-count">0</strong></span>
+            <button type="submit" class="btn btn-primary" id="finish-btn">Finish Writing</button>
+        </div>
+    </form>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const TIMER_MINUTES = {{ session.timer_minutes }};
+    const SESSION_ID = "{{ session.id }}";
+</script>
+<script src="/static/js/practice.js"></script>
+{% endblock %}

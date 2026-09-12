@@ -1,0 +1,56 @@
+{% extends "layout.html" %}
+
+{% block title %}Scriptura — Review{% endblock %}
+
+{% block content %}
+<section class="review-page">
+    <h1>Review Your Writing</h1>
+
+    <div class="review-layout">
+        <div class="review-original">
+            <h2>Your Writing</h2>
+            <div class="text-display">{{ session.original_text }}</div>
+            <p class="word-count-info">{{ session.original_word_count }} words</p>
+        </div>
+
+        <div class="review-feedback">
+            <h2>Feedback</h2>
+
+            {% if session.summary %}
+            <div class="feedback-summary">
+                <p>{{ session.summary }}</p>
+            </div>
+            {% endif %}
+
+            {% if session.mistakes %}
+            <div class="mistakes-list">
+                {% for mistake in session.mistakes %}
+                <div class="mistake-card">
+                    <div class="mistake-header">
+                        <span class="badge badge-mistake">{{ mistake.category }}</span>
+                    </div>
+                    <div class="mistake-body">
+                        <div class="mistake-original">
+                            <span class="label">Original:</span>
+                            <span class="text">{{ mistake.original }}</span>
+                        </div>
+                        <div class="mistake-correction">
+                            <span class="label">Suggestion:</span>
+                            <span class="text">{{ mistake.correction }}</span>
+                        </div>
+                        <div class="mistake-explanation">
+                            <p>{{ mistake.explanation }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="review-actions">
+        <a href="/practice/rewrite/{{ session.id }}" class="btn btn-primary">Proceed to Rewrite</a>
+    </div>
+</section>
+{% endblock %}

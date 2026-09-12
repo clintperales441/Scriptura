@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+
+{% block title %}Scriptura — Start Practice{% endblock %}
+
+{% block content %}
+<section class="setup-page">
+    <h1>Set Up Your Practice</h1>
+    <p>Choose a category, difficulty, and timer length to begin.</p>
+
+    <form action="/practice/start" method="post" class="setup-form">
+        <div class="form-group">
+            <label for="category">Category</label>
+            <select name="category" id="category" required>
+                {% for cat in categories %}
+                <option value="{{ cat }}">{{ cat }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="difficulty">Difficulty</label>
+            <select name="difficulty" id="difficulty" required>
+                {% for diff in difficulties %}
+                <option value="{{ diff }}">{{ diff }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="timer_minutes">Timer (minutes)</label>
+            <select name="timer_minutes" id="timer_minutes">
+                {% for t in timer_options %}
+                <option value="{{ t }}" {% if t == default_timer %}selected{% endif %}>{{ t }} minutes</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Start Writing</button>
+    </form>
+</section>
+{% endblock %}

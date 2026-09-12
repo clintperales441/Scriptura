@@ -1,0 +1,92 @@
+[
+    {
+        "id": 1,
+        "text": "What is something you usually do after waking up? Describe your morning routine in detail.",
+        "category": "Everyday",
+        "difficulty": "Beginner"
+    },
+    {
+        "id": 2,
+        "text": "Describe your favorite place to eat. What do you usually order and why?",
+        "category": "Everyday",
+        "difficulty": "Beginner"
+    },
+    {
+        "id": 3,
+        "text": "You are planning a weekend trip with friends. Write an email suggesting a destination, activities, and schedule.",
+        "category": "Everyday",
+        "difficulty": "Intermediate"
+    },
+    {
+        "id": 4,
+        "text": "Should students be required to learn basic programming in school? Explain your position.",
+        "category": "Opinion",
+        "difficulty": "Intermediate"
+    },
+    {
+        "id": 5,
+        "text": "Do you think remote work is better than working in an office? Why or why not?",
+        "category": "Opinion",
+        "difficulty": "Beginner"
+    },
+    {
+        "id": 6,
+        "text": "Some people believe that social media does more harm than good. Present arguments for both sides and state your own opinion.",
+        "category": "Opinion",
+        "difficulty": "Advanced"
+    },
+    {
+        "id": 7,
+        "text": "Describe a difficult problem you solved recently. What was the problem, how did you approach it, and what did you learn?",
+        "category": "Experience",
+        "difficulty": "Intermediate"
+    },
+    {
+        "id": 8,
+        "text": "Tell a story about a time you had to communicate in English in a challenging situation.",
+        "category": "Experience",
+        "difficulty": "Beginner"
+    },
+    {
+        "id": 9,
+        "text": "Reflect on a project or task that did not go as planned. What went wrong, and what would you do differently?",
+        "category": "Experience",
+        "difficulty": "Advanced"
+    },
+    {
+        "id": 10,
+        "text": "Why is clear documentation important in a workplace? Provide specific examples.",
+        "category": "Academic / Professional",
+        "difficulty": "Intermediate"
+    },
+    {
+        "id": 11,
+        "text": "Write a short proposal for improving a process at your workplace or school.",
+        "category": "Academic / Professional",
+        "difficulty": "Advanced"
+    },
+    {
+        "id": 12,
+        "text": "Write an email to your manager requesting time off for next week. Be polite and professional.",
+        "category": "Academic / Professional",
+        "difficulty": "Beginner"
+    },
+    {
+        "id": 13,
+        "text": "Explain why network monitoring is important for maintaining a secure infrastructure.",
+        "category": "Technical",
+        "difficulty": "Intermediate"
+    },
+    {
+        "id": 14,
+        "text": "Describe the difference between a firewall and an intrusion detection system (IDS). When would you use each?",
+        "category": "Technical",
+        "difficulty": "Advanced"
+    },
+    {
+        "id": 15,
+        "text": "Explain what a VPN is and why someone might use one. Write as if explaining to a non-technical person.",
+        "category": "Technical",
+        "difficulty": "Beginner"
+    }
+]

@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+
+{% block title %}Scriptura — Dashboard{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h1>Welcome to Scriptura</h1>
+    <p class="hero-subtitle">Improve your English writing through focused practice sessions</p>
+    <a href="/practice/setup" class="btn btn-primary btn-lg">Start Practice</a>
+</section>
+
+<section class="stats-grid">
+    <div class="stat-card">
+        <span class="stat-number">{{ stats.sessions_completed }}</span>
+        <span class="stat-label">Sessions</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-number">{{ stats.current_streak }}</span>
+        <span class="stat-label">Day Streak</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-number">{{ stats.total_words }}</span>
+        <span class="stat-label">Words Written</span>
+    </div>
+</section>
+
+{% if stats.recent_sessions %}
+<section class="recent-sessions">
+    <h2>Recent Sessions</h2>
+    <div class="session-list">
+        {% for session in stats.recent_sessions %}
+        <div class="session-card">
+            <span class="session-category">{{ session.category }}</span>
+            <span class="session-date">{{ session.date }}</span>
+            <span class="session-words">{{ session.word_count }} words</span>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% else %}
+<section class="empty-state">
+    <p>No sessions yet. Start your first practice to begin tracking your progress!</p>
+</section>
+{% endif %}
+{% endblock %}
