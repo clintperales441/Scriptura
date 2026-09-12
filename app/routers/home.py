@@ -1,20 +1,18 @@
 """Home / Dashboard routes."""
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, Depends
 from fastapi.templating import Jinja2Templates
+from sqlalchemy.orm import Session
+
+from app.database import get_db
+from app.services import progress_service
 
 router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
 
 
 @router.get("/")
-async def home(request: Request):
+async def home(request: Request, db: Session = Depends(get_db)):
     """Render the home/dashboard page."""
-    # Phase 2: Replace with real stats from database
-    stats = {
-        "sessions_completed": 0,
-        "current_streak": 0,
-        "total_words": 0,
-        "recent_sessions": [],
-    }
+    stats = progress_service.get_stats(db)
     return templates.TemplateResponse(request, "home.html", {"stats": stats})
