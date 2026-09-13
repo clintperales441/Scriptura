@@ -29,11 +29,12 @@
     <h2>Recent Sessions</h2>
     <div class="session-list">
         {% for session in stats.recent_sessions %}
-        <div class="session-card">
-            <span class="session-category">{{ session.category }}</span>
+        <a href="/practice/result/{{ session.id }}" class="session-card" style="text-decoration: none; color: inherit;">
+            <span class="badge badge-category">{{ session.category }}</span>
             <span class="session-date">{{ session.date }}</span>
             <span class="session-words">{{ session.word_count }} words</span>
-        </div>
+            <span class="session-words">{{ session.mistake_count }} issues</span>
+        </a>
         {% endfor %}
     </div>
 </section>
