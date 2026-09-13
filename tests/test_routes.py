@@ -8,6 +8,11 @@ from app.main import app
 from app.database import engine, SessionLocal, get_db
 from app.models import Base
 from app.seed import seed_prompts
+from app.routers import practice as practice_router
+from app.services.review_service import MockReviewService
+
+# Force mock review service so tests never call live AI
+practice_router._review_service = MockReviewService()
 
 
 @pytest.fixture(autouse=True)

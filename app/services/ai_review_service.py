@@ -44,7 +44,7 @@ class AiReviewService:
     def __init__(
         self,
         api_key: Optional[str] = None,
-        model: str = "gemini-2.5-flash",
+        model: str = "gemini-3.7-flash",
         timeout: int = 30,
     ):
         """Initialize the Gemini client.
