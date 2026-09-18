@@ -1,0 +1,47 @@
+{% macro score_band_class(value) -%}
+{%- if value >= 80 -%}score-strong{%- elif value >= 60 -%}score-developing{%- else -%}score-needs-work{%- endif -%}
+{%- endmacro %}
+
+{% macro score_bars(scores, title="Scores") %}
+<div class="score-panel">
+    <h3>{{ title }}</h3>
+    <div class="score-grid">
+        {% for dim in ["overall", "grammar", "fluency", "clarity", "engagement"] %}
+        {% set value = scores[dim] %}
+        <div class="score-item">
+            <span class="score-label">{{ dim | capitalize }}</span>
+            <div class="score-bar-track">
+                <div class="score-bar-fill {{ score_band_class(value) }}" style="width: {{ value }}%"></div>
+            </div>
+            <span class="score-value">{{ value }}</span>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endmacro %}
+
+{% macro score_comparison(original_scores, rewrite_scores) %}
+<div class="score-panel">
+    <h3>Score Improvement</h3>
+    <div class="score-grid">
+        {% for dim in ["overall", "grammar", "fluency", "clarity", "engagement"] %}
+        {% set before = original_scores[dim] %}
+        {% set after = rewrite_scores[dim] %}
+        {% set delta = after - before %}
+        <div class="score-item">
+            <span class="score-label">{{ dim | capitalize }}</span>
+            <div class="score-bar-track">
+                <div class="score-bar-fill {{ score_band_class(after) }}" style="width: {{ after }}%"></div>
+            </div>
+            <span class="score-value">
+                {{ before }} &rarr; {{ after }}
+                {% if delta > 0 %}<span class="score-delta score-delta-up">+{{ delta }}</span>
+                {% elif delta < 0 %}<span class="score-delta score-delta-down">{{ delta }}</span>
+                {% else %}<span class="score-delta score-delta-flat">&plusmn;0</span>
+                {% endif %}
+            </span>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endmacro %}

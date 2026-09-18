@@ -73,6 +73,51 @@ class TestMockReviewService:
             assert mistake.category
             assert mistake.explanation
 
+    def test_scores_present_and_in_range(self):
+        result = self._review("i dont know alot about this very complicated topic.")
+        assert result.scores is not None
+        for value in (result.scores.grammar, result.scores.fluency,
+                      result.scores.clarity, result.scores.engagement):
+            assert 0 <= value <= 100
+
+    def test_more_mistakes_lowers_grammar_and_clarity_scores(self):
+        clean = self._review("The weather was nice today and I enjoyed my walk very much.")
+        messy = self._review("i dont know alot about this very complicated topic.")
+        assert messy.scores.grammar <= clean.scores.grammar
+        assert messy.scores.clarity <= clean.scores.clarity
+
+    def test_short_writing_scores_lower_fluency_and_engagement(self):
+        short = self._review("Hello.")
+        longer = self._review(
+            "I went to the park today and had a wonderful time with my friends. "
+            "We played games, talked for hours, and enjoyed the sunny weather "
+            "together before heading home for dinner."
+        )
+        assert short.scores.fluency < longer.scores.fluency
+        assert short.scores.engagement < longer.scores.engagement
+
+
+class TestWritingScores:
+    """Tests for the WritingScores overall-average computation."""
+
+    def test_overall_is_average_of_four_dimensions(self):
+        from app.schemas.review import WritingScores
+        scores = WritingScores(grammar=80, fluency=60, clarity=100, engagement=40)
+        assert scores.overall_score == 70
+
+    def test_overall_rounds_to_nearest_whole_number(self):
+        from app.schemas.review import WritingScores
+        scores = WritingScores(grammar=90, fluency=90, clarity=90, engagement=91)
+        assert scores.overall_score == 90  # 90.25 rounds down
+
+    def test_overall_not_in_json_schema(self):
+        """overall_score is a computed property, not an AI-provided field --
+        it must not appear in the schema handed to the AI, or the AI could
+        try (and fail, or drift) to supply its own value for it."""
+        from app.schemas.review import WritingScores
+        schema = WritingScores.model_json_schema()
+        assert "overall_score" not in schema.get("properties", {})
+
 
 class TestReviewResponseParsing:
     """Tests for parsing AI-style JSON responses into ReviewResponse."""

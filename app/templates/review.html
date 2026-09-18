@@ -1,4 +1,5 @@
 {% extends "layout.html" %}
+{% import "_scores.html" as scores_macro %}
 
 {% block title %}Scriptura — Review{% endblock %}
 
@@ -11,6 +12,10 @@
             <h2>Your Writing</h2>
             <div class="text-display">{{ session.original_text }}</div>
             <p class="word-count-info">{{ session.original_word_count }} words</p>
+
+            {% if session.original_scores %}
+            {{ scores_macro.score_bars(session.original_scores, "Writing Scores") }}
+            {% endif %}
         </div>
 
         <div class="review-feedback">
@@ -23,9 +28,9 @@
             {% endif %}
 
             {% if session.mistakes %}
-            <div class="mistakes-list">
+            <div class="mistakes-list" id="mistakes-list">
                 {% for mistake in session.mistakes %}
-                <div class="mistake-card">
+                <div class="mistake-card" data-index="{{ loop.index0 }}">
                     <div class="mistake-header">
                         <span class="badge badge-mistake">{{ mistake.category }}</span>
                     </div>
@@ -45,6 +50,16 @@
                 </div>
                 {% endfor %}
             </div>
+
+            {% if session.mistakes|length > 1 %}
+            <div class="mistakes-pager" id="mistakes-pager">
+                <button type="button" id="mistake-prev" class="btn btn-secondary" disabled>← Back</button>
+                <span class="mistakes-pager-count">
+                    <span id="mistake-current">1</span> / {{ session.mistakes|length }}
+                </span>
+                <button type="button" id="mistake-next" class="btn btn-secondary">Next →</button>
+            </div>
+            {% endif %}
             {% endif %}
         </div>
     </div>
@@ -53,4 +68,46 @@
         <a href="/practice/rewrite/{{ session.id }}" class="btn btn-primary">Proceed to Rewrite</a>
     </div>
 </section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // One-card-at-a-time pager for the mistakes list, so the person
+    // doesn't have to scroll past every mistake to read the last one.
+    (function () {
+        const cards = document.querySelectorAll('#mistakes-list .mistake-card');
+        const prevBtn = document.getElementById('mistake-prev');
+        const nextBtn = document.getElementById('mistake-next');
+        const currentLabel = document.getElementById('mistake-current');
+
+        if (!cards.length || !prevBtn || !nextBtn) return;
+
+        let current = 0;
+
+        function render() {
+            cards.forEach((card, i) => {
+                card.style.display = i === current ? '' : 'none';
+            });
+            currentLabel.textContent = current + 1;
+            prevBtn.disabled = current === 0;
+            nextBtn.disabled = current === cards.length - 1;
+        }
+
+        prevBtn.addEventListener('click', () => {
+            if (current > 0) {
+                current--;
+                render();
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (current < cards.length - 1) {
+                current++;
+                render();
+            }
+        });
+
+        render();
+    })();
+</script>
 {% endblock %}

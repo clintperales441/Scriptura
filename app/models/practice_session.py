@@ -38,6 +38,22 @@ class PracticeSession(Base):
     summary: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     overall_feedback: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
+    # Quality scores (0-100) for the original submission, from the AI's
+    # holistic review. Nullable because older sessions predate scoring,
+    # and a technical AI failure legitimately has no score to report.
+    original_grammar_score: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    original_fluency_score: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    original_clarity_score: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    original_engagement_score: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+
+    # Same four dimensions, re-scored on the rewrite, so the result page
+    # can show a before/after comparison. Only populated once a rewrite
+    # is submitted.
+    rewrite_grammar_score: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    rewrite_fluency_score: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    rewrite_clarity_score: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    rewrite_engagement_score: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+
     # Relationships
     prompt: Mapped["WritingPrompt"] = relationship(lazy="joined")
     mistakes: Mapped[list["WritingMistake"]] = relationship(
