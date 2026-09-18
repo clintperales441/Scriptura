@@ -7,6 +7,39 @@
     <h1>Set Up Your Practice</h1>
     <p>Choose a category, difficulty, and timer length to begin.</p>
 
+    {% if weak_area %}
+    <div class="weak-area-card">
+        <h2>Recommended for You</h2>
+        <p>
+            Your most unresolved mistakes lately have been in
+            <strong>{{ weak_area[0] }}</strong>. Practicing with a
+            <strong>{{ weak_area[1] }}</strong> prompt tends to give more
+            chances to work on that.
+        </p>
+        <form action="/practice/start-weak-area" method="post" class="weak-area-form">
+            <div class="form-group">
+                <label for="weak-difficulty">Difficulty</label>
+                <select name="difficulty" id="weak-difficulty" required>
+                    {% for diff in difficulties %}
+                    <option value="{{ diff }}">{{ diff }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="weak-timer">Timer (minutes)</label>
+                <select name="timer_minutes" id="weak-timer">
+                    {% for t in timer_options %}
+                    <option value="{{ t }}" {% if t == default_timer %}selected{% endif %}>{{ t }} minutes</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Practice My Weak Area</button>
+        </form>
+    </div>
+
+    <div class="setup-divider"><span>or choose manually</span></div>
+    {% endif %}
+
     <form action="/practice/start" method="post" class="setup-form">
         <div class="form-group">
             <label for="category">Category</label>

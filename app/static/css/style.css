@@ -269,6 +269,54 @@ main.container {
     margin-top: 0.5rem;
 }
 
+/* --- Weak Area Recommendation (setup) --- */
+.weak-area-card {
+    background: var(--color-primary-light, var(--color-surface));
+    border: 1px solid var(--color-primary);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.weak-area-card h2 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}
+
+.weak-area-card > p {
+    color: var(--color-text);
+    margin-bottom: 1.25rem;
+    font-size: 0.9rem;
+}
+
+.weak-area-form .form-group {
+    margin-bottom: 1rem;
+}
+
+.weak-area-form .btn {
+    width: 100%;
+}
+
+.setup-divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
+    margin: 1.5rem 0;
+}
+
+.setup-divider::before,
+.setup-divider::after {
+    content: "";
+    flex: 1;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.setup-divider span {
+    padding: 0 0.75rem;
+}
+
 /* --- Practice Page --- */
 .practice-page {
     max-width: 720px;
@@ -487,6 +535,22 @@ main.container {
     text-align: center;
 }
 
+/* --- Mistakes Pager (review) --- */
+.mistakes-pager {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.mistakes-pager-count {
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    min-width: 3.5rem;
+    text-align: center;
+}
+
 /* --- Rewrite Page --- */
 .rewrite-page h1 {
     margin-bottom: 0.5rem;
@@ -586,6 +650,34 @@ main.container {
     margin-bottom: 0.5rem;
 }
 
+.result-text-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.result-text-header h2 {
+    margin-bottom: 0;
+}
+
+.result-text-pager {
+    display: flex;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+.btn-sm {
+    padding: 0.35rem 0.75rem;
+    font-size: 0.8rem;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 .result-prompt {
     background: var(--color-surface);
     border: 1px solid var(--color-border);
@@ -610,6 +702,220 @@ main.container {
     display: flex;
     gap: 1rem;
     justify-content: center;
+}
+
+/* --- Score Trend (home) --- */
+.score-trend {
+    margin: 2rem 0;
+}
+
+.score-trend h2 {
+    margin-bottom: 0.25rem;
+}
+
+.score-trend-subtitle {
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+}
+
+.score-trend-chart {
+    width: 100%;
+    height: 160px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+}
+
+.trend-line {
+    fill: none;
+    stroke-width: 2;
+}
+
+.trend-overall {
+    stroke: var(--color-text);
+    stroke-width: 3;
+}
+
+.trend-grammar {
+    stroke: var(--color-primary);
+}
+
+.trend-fluency {
+    stroke: var(--color-success);
+}
+
+.trend-clarity {
+    stroke: var(--color-info);
+}
+
+.trend-engagement {
+    stroke: var(--color-warning);
+}
+
+.score-trend-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.legend-item::before {
+    content: "";
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.legend-item strong {
+    color: var(--color-text);
+}
+
+.legend-overall::before { background: var(--color-text); }
+.legend-grammar::before { background: var(--color-primary); }
+.legend-fluency::before { background: var(--color-success); }
+.legend-clarity::before { background: var(--color-info); }
+.legend-engagement::before { background: var(--color-warning); }
+
+/* --- Score Panel (review / result) --- */
+.score-panel {
+    margin-top: 1.5rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.score-panel h3 {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+.score-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+}
+
+.score-item {
+    display: grid;
+    grid-template-columns: 100px 1fr auto;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.score-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+}
+
+.score-bar-track {
+    height: 8px;
+    background: var(--color-border);
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.score-bar-fill {
+    height: 100%;
+    border-radius: 999px;
+}
+
+.score-strong { background: var(--color-success); }
+.score-developing { background: var(--color-warning); }
+.score-needs-work { background: var(--color-danger); }
+
+.score-value {
+    font-size: 0.85rem;
+    color: var(--color-text);
+    white-space: nowrap;
+    min-width: 2.5rem;
+    text-align: right;
+}
+
+.score-delta {
+    font-weight: 600;
+    margin-left: 0.35rem;
+}
+
+.score-delta-up { color: var(--color-success); }
+.score-delta-down { color: var(--color-danger); }
+.score-delta-flat { color: var(--color-text-muted); }
+
+.score-note {
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+}
+
+/* --- Mistake Breakdown (home) --- */
+.mistake-breakdown {
+    margin: 2rem 0;
+}
+
+.mistake-breakdown h2 {
+    margin-bottom: 0.25rem;
+}
+
+.mistake-breakdown-subtitle {
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+}
+
+.mistake-breakdown-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.mistake-breakdown-row {
+    display: grid;
+    grid-template-columns: 140px 1fr auto auto;
+    align-items: center;
+    gap: 0.75rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 0.6rem 1rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.mistake-breakdown-category {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.mistake-breakdown-bar-track {
+    height: 8px;
+    background: var(--color-border);
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.mistake-breakdown-bar-fill {
+    height: 100%;
+    background: var(--color-success, var(--color-primary));
+    border-radius: 999px;
+}
+
+.mistake-breakdown-count,
+.mistake-breakdown-rate {
+    color: var(--color-text-muted);
+    font-size: 0.8rem;
+    white-space: nowrap;
 }
 
 /* --- Session Cards (home) --- */
@@ -674,5 +980,19 @@ main.container {
         flex-direction: column;
         align-items: flex-start;
         gap: 0.25rem;
+    }
+
+    .mistake-breakdown-row {
+        grid-template-columns: 1fr;
+        gap: 0.35rem;
+    }
+
+    .score-item {
+        grid-template-columns: 1fr;
+        gap: 0.35rem;
+    }
+
+    .score-value {
+        text-align: left;
     }
 }

@@ -15,4 +15,14 @@ templates = Jinja2Templates(directory="app/templates")
 async def home(request: Request, db: Session = Depends(get_db)):
     """Render the home/dashboard page."""
     stats = progress_service.get_stats(db)
-    return templates.TemplateResponse(request, "home.html", {"stats": stats})
+    mistake_breakdown = progress_service.get_mistake_breakdown(db)
+    score_trend = progress_service.get_score_trend_chart(db)
+    return templates.TemplateResponse(
+        request,
+        "home.html",
+        {
+            "stats": stats,
+            "mistake_breakdown": mistake_breakdown,
+            "score_trend": score_trend,
+        },
+    )

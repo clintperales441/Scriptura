@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 
 from app.config import settings
 from app.database import get_db
-from app.services import prompt_service, practice_service
+from app.services import prompt_service, practice_service, progress_service
 from app.services.review_service import MockReviewService, ReviewService
 from app.schemas.review import ReviewRequest
 
@@ -61,11 +61,42 @@ def _session_to_template(session) -> dict:
             }
             for m in session.mistakes
         ],
+        "original_scores": practice_service.scores_dict(
+            session.original_grammar_score,
+            session.original_fluency_score,
+            session.original_clarity_score,
+            session.original_engagement_score,
+        ),
+        "rewrite_scores": practice_service.scores_dict(
+            session.rewrite_grammar_score,
+            session.rewrite_fluency_score,
+            session.rewrite_clarity_score,
+            session.rewrite_engagement_score,
+        ),
     }
 
 
+def _render_practice_start(request, session, prompt_text: str, timer_minutes: int):
+    """Shared response builder for a freshly-started session, used by
+    both the manual /start route and the weak-area /start-weak-area route
+    so the practice.html context stays in one place."""
+    return templates.TemplateResponse(
+        request,
+        "practice.html",
+        {
+            "session": {
+                "id": session.id,
+                "category": session.category,
+                "difficulty": session.difficulty,
+                "prompt": {"text": prompt_text},
+                "timer_minutes": timer_minutes,
+            },
+        },
+    )
+
+
 @router.get("/setup")
-async def setup(request: Request):
+async def setup(request: Request, db: Session = Depends(get_db)):
     """Show category and difficulty selection."""
     categories = [
         "Everyday", "Opinion", "Experience",
@@ -73,6 +104,10 @@ async def setup(request: Request):
     ]
     difficulties = ["Beginner", "Intermediate", "Advanced"]
     timer_options = [3, 5, 10]
+
+    mistake_breakdown = progress_service.get_mistake_breakdown(db)
+    weak_area = prompt_service.recommend_topic_category(mistake_breakdown)
+
     return templates.TemplateResponse(
         request,
         "setup.html",
@@ -81,6 +116,8 @@ async def setup(request: Request):
             "difficulties": difficulties,
             "timer_options": timer_options,
             "default_timer": settings.default_timer_minutes,
+            # (weak_mistake_category, recommended_topic_category) or None
+            "weak_area": weak_area,
         },
     )
 
@@ -93,7 +130,7 @@ async def start(
     timer_minutes: int = Form(5),
     db: Session = Depends(get_db),
 ):
-    """Start a new practice session."""
+    """Start a new practice session with a manually chosen category."""
     prompt = prompt_service.get_random_prompt(db, category, difficulty)
     if not prompt:
         return RedirectResponse("/", status_code=303)
@@ -105,19 +142,37 @@ async def start(
         difficulty=difficulty,
     )
 
-    return templates.TemplateResponse(
-        request,
-        "practice.html",
-        {
-            "session": {
-                "id": session.id,
-                "category": session.category,
-                "difficulty": session.difficulty,
-                "prompt": {"text": prompt.text},
-                "timer_minutes": timer_minutes,
-            },
-        },
+    return _render_practice_start(request, session, prompt.text, timer_minutes)
+
+
+@router.post("/start-weak-area")
+async def start_weak_area(
+    request: Request,
+    difficulty: str = Form(...),
+    timer_minutes: int = Form(5),
+    db: Session = Depends(get_db),
+):
+    """Start a new practice session with the topic category chosen for
+    the learner, biased toward their current weakest mistake category
+    instead of a manual pick."""
+    mistake_breakdown = progress_service.get_mistake_breakdown(db)
+    prompt, topic_category, _weak_category = prompt_service.get_prompt_for_weak_area(
+        db, difficulty, mistake_breakdown
     )
+
+    if not prompt:
+        # No mistake history yet (or nothing unresolved) -- there's
+        # nothing to recommend from, so don't dead-end the button.
+        return RedirectResponse("/practice/setup", status_code=303)
+
+    session = practice_service.create_session(
+        db,
+        prompt_id=prompt.id,
+        category=topic_category,
+        difficulty=difficulty,
+    )
+
+    return _render_practice_start(request, session, prompt.text, timer_minutes)
 
 
 @router.post("/submit")
@@ -178,8 +233,25 @@ async def submit_rewrite(
     rewrite: str = Form(...),
     db: Session = Depends(get_db),
 ):
-    """Submit the rewritten text and show results."""
-    session = practice_service.submit_rewrite(db, session_id, rewrite)
+    """Submit the rewritten text, re-score it, and show results."""
+    existing_session = practice_service.get_session(db, session_id)
+    if not existing_session:
+        return RedirectResponse("/", status_code=303)
+
+    # Re-score the rewrite (a second review call) so the result page can
+    # show a before/after comparison, not just the original's scores.
+    # We deliberately ignore this second call's mistakes/summary -- only
+    # its `scores` are used, so we don't double up WritingMistake rows
+    # for what's fundamentally the same session's mistake history.
+    rewrite_review_request = ReviewRequest(
+        prompt=existing_session.prompt.text,
+        writing=rewrite,
+        category=existing_session.category,
+        difficulty=existing_session.difficulty,
+    )
+    rewrite_review = _review_service.review(rewrite_review_request)
+
+    session = practice_service.submit_rewrite(db, session_id, rewrite, rewrite_review)
     if not session:
         return RedirectResponse("/", status_code=303)
 
@@ -200,5 +272,8 @@ async def result(
     return templates.TemplateResponse(
         request,
         "result.html",
-        {"session": _session_to_template(session)},
+        {
+            "session": _session_to_template(session),
+            "corrected_text": practice_service.build_corrected_text(session),
+        },
     )

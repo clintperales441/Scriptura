@@ -1,4 +1,5 @@
 {% extends "layout.html" %}
+{% import "_scores.html" as scores_macro %}
 
 {% block title %}Scriptura — Result{% endblock %}
 
@@ -22,15 +23,29 @@
     </div>
 
     <div class="result-comparison">
-        <div class="result-text">
-            <h2>Original</h2>
-            <div class="text-display">{{ session.original_text }}</div>
+        <div class="result-text result-text-toggle">
+            <div class="result-text-header">
+                <h2 id="user-text-label">Original</h2>
+                <div class="result-text-pager">
+                    <button type="button" id="user-text-prev" class="btn btn-secondary btn-sm" disabled>← Back</button>
+                    <button type="button" id="user-text-next" class="btn btn-secondary btn-sm">Next →</button>
+                </div>
+            </div>
+            <div class="text-display" id="user-text-original">{{ session.original_text }}</div>
+            <div class="text-display" id="user-text-rewrite" style="display: none;">{{ session.rewritten_text }}</div>
         </div>
         <div class="result-text">
-            <h2>Rewrite</h2>
-            <div class="text-display">{{ session.rewritten_text }}</div>
+            <h2>Corrected Version</h2>
+            <div class="text-display">{{ corrected_text }}</div>
         </div>
     </div>
+
+    {% if session.original_scores and session.rewrite_scores %}
+    {{ scores_macro.score_comparison(session.original_scores, session.rewrite_scores) }}
+    {% elif session.original_scores %}
+    {{ scores_macro.score_bars(session.original_scores, "Writing Scores") }}
+    <p class="score-note">Your rewrite wasn't scored this time — the comparison will show up on your next session.</p>
+    {% endif %}
 
     <div class="result-prompt">
         <h3>Prompt</h3>
@@ -43,4 +58,50 @@
         <a href="/" class="btn btn-secondary">Back to Dashboard</a>
     </div>
 </section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Toggle between the learner's original text and their rewrite in
+    // one card, so it sits side-by-side with the Corrected Version card
+    // instead of pushing it off-screen.
+    (function () {
+        const panels = [
+            { label: 'Original', el: document.getElementById('user-text-original') },
+            { label: 'Your Rewrite', el: document.getElementById('user-text-rewrite') },
+        ];
+        const prevBtn = document.getElementById('user-text-prev');
+        const nextBtn = document.getElementById('user-text-next');
+        const label = document.getElementById('user-text-label');
+
+        if (!panels[0].el || !panels[1].el || !prevBtn || !nextBtn) return;
+
+        let current = 0;
+
+        function render() {
+            panels.forEach((panel, i) => {
+                panel.el.style.display = i === current ? '' : 'none';
+            });
+            label.textContent = panels[current].label;
+            prevBtn.disabled = current === 0;
+            nextBtn.disabled = current === panels.length - 1;
+        }
+
+        prevBtn.addEventListener('click', () => {
+            if (current > 0) {
+                current--;
+                render();
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (current < panels.length - 1) {
+                current++;
+                render();
+            }
+        });
+
+        render();
+    })();
+</script>
 {% endblock %}

@@ -24,6 +24,51 @@
     </div>
 </section>
 
+{% if score_trend %}
+<section class="score-trend">
+    <h2>Score Trend</h2>
+    <p class="score-trend-subtitle">Your last {{ score_trend.session_count }} scored sessions</p>
+    <svg viewBox="0 0 {{ score_trend.width }} {{ score_trend.height }}" class="score-trend-chart" preserveAspectRatio="none">
+        <polyline class="trend-line trend-grammar" points="{{ score_trend.lines.grammar }}" />
+        <polyline class="trend-line trend-fluency" points="{{ score_trend.lines.fluency }}" />
+        <polyline class="trend-line trend-clarity" points="{{ score_trend.lines.clarity }}" />
+        <polyline class="trend-line trend-engagement" points="{{ score_trend.lines.engagement }}" />
+        <polyline class="trend-line trend-overall" points="{{ score_trend.lines.overall }}" />
+    </svg>
+    <div class="score-trend-legend">
+        <span class="legend-item legend-overall">Overall <strong>{{ score_trend.latest.overall }}</strong></span>
+        <span class="legend-item legend-grammar">Grammar <strong>{{ score_trend.latest.grammar }}</strong></span>
+        <span class="legend-item legend-fluency">Fluency <strong>{{ score_trend.latest.fluency }}</strong></span>
+        <span class="legend-item legend-clarity">Clarity <strong>{{ score_trend.latest.clarity }}</strong></span>
+        <span class="legend-item legend-engagement">Engagement <strong>{{ score_trend.latest.engagement }}</strong></span>
+    </div>
+</section>
+{% endif %}
+
+{% if mistake_breakdown %}
+<section class="mistake-breakdown">
+    <h2>Where to Focus</h2>
+    <p class="mistake-breakdown-subtitle">
+        Based on your most recent practice sessions
+    </p>
+    <div class="mistake-breakdown-list">
+        {% for item in mistake_breakdown %}
+        <div class="mistake-breakdown-row">
+            <span class="mistake-breakdown-category">{{ item.category }}</span>
+            <div class="mistake-breakdown-bar-track">
+                <div
+                    class="mistake-breakdown-bar-fill"
+                    style="width: {{ item.correction_rate }}%"
+                ></div>
+            </div>
+            <span class="mistake-breakdown-count">{{ item.total }} seen</span>
+            <span class="mistake-breakdown-rate">{{ item.correction_rate }}% fixed</span>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
 {% if stats.recent_sessions %}
 <section class="recent-sessions">
     <h2>Recent Sessions</h2>

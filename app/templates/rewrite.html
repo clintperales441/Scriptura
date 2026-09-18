@@ -5,23 +5,13 @@
 {% block content %}
 <section class="rewrite-page">
     <h1>Rewrite Your Response</h1>
-    <p class="rewrite-instructions">Review the feedback above your writing area, then write an improved version below. <strong>Do not copy-paste — rewrite from scratch.</strong></p>
+    <p class="rewrite-instructions">Rewrite your response from memory, applying what you learned from the feedback. <strong>Do not copy-paste — rewrite from scratch.</strong></p>
 
     <div class="rewrite-layout">
         <div class="rewrite-reference">
             <div class="reference-section">
                 <h3>Your Original Writing</h3>
                 <div class="text-display">{{ session.original_text }}</div>
-            </div>
-
-            <div class="reference-section">
-                <h3>Feedback</h3>
-                {% for mistake in session.mistakes %}
-                <div class="mistake-mini">
-                    <span class="badge badge-mistake">{{ mistake.category }}</span>
-                    <span>{{ mistake.original }} → {{ mistake.correction }}</span>
-                </div>
-                {% endfor %}
             </div>
         </div>
 
