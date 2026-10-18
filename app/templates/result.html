@@ -31,7 +31,7 @@
                     <button type="button" id="user-text-next" class="btn btn-secondary btn-sm">Next →</button>
                 </div>
             </div>
-            <div class="text-display" id="user-text-original">{{ session.original_text }}</div>
+            <div class="text-display" id="user-text-original">{% if session.highlighted_original_text %}{{ session.highlighted_original_text | safe }}{% else %}{{ session.original_text }}{% endif %}</div>
             <div class="text-display" id="user-text-rewrite" style="display: none;">{{ session.rewritten_text }}</div>
         </div>
         <div class="result-text">
@@ -104,4 +104,5 @@
         render();
     })();
 </script>
+<script src="/static/js/rag_proof_box.js"></script>
 {% endblock %}

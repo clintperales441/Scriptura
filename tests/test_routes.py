@@ -258,3 +258,27 @@ class TestScoring:
         response = client.get("/")
         assert response.status_code == 200
         assert "Score Trend" not in response.text
+
+    def test_rag_highlight_and_proof_box_rendered(self, client):
+        """Verify words like 'a apple' or 'for buy' are highlighted with Merriam-Webster proof attributes."""
+        response = client.post(
+            "/practice/start",
+            data={"category": "Everyday", "difficulty": "Beginner", "timer_minutes": "5"},
+        )
+        session_id = re.search(r'name="session_id" value="([^"]+)"', response.text).group(1)
+
+        response = client.post(
+            "/practice/submit",
+            data={
+                "session_id": session_id,
+                "writing": "Yesterday i bought a apple and went for buy groceries.",
+            },
+        )
+        assert response.status_code == 200
+        # In-text highlighting
+        assert "ai-highlight-word" in response.text
+        # Merriam-Webster authoritative proof and link
+        assert "Merriam-Webster" in response.text
+        assert "https://www.merriam-webster.com/" in response.text
+        # Hover proof box script
+        assert "rag_proof_box.js" in response.text

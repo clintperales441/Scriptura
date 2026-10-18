@@ -20,11 +20,32 @@ MistakeCategory = Literal[
 
 
 class MistakeItem(BaseModel):
-    """A single identified mistake."""
+    """A single identified mistake with optional RAG proof grounding."""
     original: str
     correction: str
     category: MistakeCategory
     explanation: str
+    rule_id: Optional[str] = None
+    rule_name: Optional[str] = None
+    source_name: Optional[str] = None
+    source_url: Optional[str] = None
+    proof: Optional[str] = None
+
+
+class AiMistakeGenerationItem(BaseModel):
+    """Token-efficient schema for AI generation without verbose repetitive proof text."""
+    original: str = Field(description="Exact verbatim substring from the student text.")
+    correction: str = Field(description="Grammatically corrected replacement.")
+    category: MistakeCategory
+    explanation: str = Field(description="Concise 1-2 sentence explanation.")
+    rule_id: Optional[str] = Field(default=None, description="Optional ID of matching authoritative rule if applicable.")
+
+
+class TokenUsage(BaseModel):
+    """Token metrics for AI call observation."""
+    prompt_tokens: int = 0
+    candidates_tokens: int = 0
+    total_tokens: int = 0
 
 
 class WritingScores(BaseModel):
@@ -64,6 +85,14 @@ class ReviewRequest(BaseModel):
     difficulty: str
 
 
+class AiReviewGenerationResponse(BaseModel):
+    """Token-efficient response schema for the AI review model."""
+    mistakes: list[AiMistakeGenerationItem]
+    summary: str
+    overall_feedback: str
+    scores: Optional[WritingScores] = None
+
+
 class ReviewResponse(BaseModel):
     """Structured response from the review service."""
     mistakes: list[MistakeItem]
@@ -73,3 +102,4 @@ class ReviewResponse(BaseModel):
     # entirely instead of showing a misleading 0 for something that was
     # never actually assessed.
     scores: Optional[WritingScores] = None
+    token_usage: Optional[TokenUsage] = None

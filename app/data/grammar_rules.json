@@ -1,0 +1,263 @@
+[
+  {
+    "id": "mw_articles_a_vs_an",
+    "title": "Indefinite Articles: When to Use 'A' vs. 'An'",
+    "category": "Grammar",
+    "target_words": ["a", "an"],
+    "source_name": "Merriam-Webster",
+    "source_url": "https://www.merriam-webster.com/grammar/is-it-a-or-an",
+    "rule_summary": "Use 'a' before words beginning with a consonant sound, and 'an' before words beginning with a vowel sound. The sound matters, not the written letter.",
+    "proof": "Merriam-Webster Usage Guide: 'The rule is that a is used before words that begin with a consonant sound, and an is used before words that begin with a vowel sound. The choice depends on the phonetic sound of the following word, not its spelling: an hour (silent h), an honest mistake, a university (starts with the consonant sound /j/), a one-time event (starts with /w/).'",
+    "examples": [
+      {"incorrect": "She bought a apple.", "correct": "She bought an apple.", "note": "'apple' starts with a vowel sound."},
+      {"incorrect": "He is an doctor.", "correct": "He is a doctor.", "note": "'doctor' starts with a consonant sound."},
+      {"incorrect": "It took a hour.", "correct": "It took an hour.", "note": "Silent 'h' produces a vowel sound."},
+      {"incorrect": "This is an university.", "correct": "This is a university.", "note": "'university' begins with a 'y' consonant sound."}
+    ],
+    "keywords": ["a", "an", "article", "articles", "indefinite article", "vowel sound", "consonant sound", "hour", "university", "honest", "apple"]
+  },
+  {
+    "id": "mw_definite_article_the",
+    "title": "Definite Article: When to Use 'The' vs. Zero/Indefinite Article",
+    "category": "Grammar",
+    "target_words": ["the", "a", "an"],
+    "source_name": "Merriam-Webster",
+    "source_url": "https://www.merriam-webster.com/dictionary/the",
+    "rule_summary": "Use 'the' to refer to specific, unique, or previously mentioned nouns that both speaker and listener can identify. Do not use 'the' before plural or uncountable nouns when making general statements.",
+    "proof": "Merriam-Webster Dictionary & Grammar: 'The is a definite article used as a function word to indicate that a following noun refers to someone or something previously mentioned, known by common knowledge, or uniquely specified (e.g. the sun, the president). It is omitted when discussing concepts or plural items in general (e.g. 'I love nature', not 'the nature').'",
+    "examples": [
+      {"incorrect": "I love the nature.", "correct": "I love nature.", "note": "General concepts do not take 'the'."},
+      {"incorrect": "Pass me a salt.", "correct": "Pass me the salt.", "note": "Specific item in the immediate context takes 'the'."},
+      {"incorrect": "He goes to the school by bus.", "correct": "He goes to school by bus.", "note": "Institutions used for their primary purpose do not take 'the'."}
+    ],
+    "keywords": ["the", "definite article", "specific noun", "general noun", "nature", "omission of the", "zero article"]
+  },
+  {
+    "id": "mw_preposition_to_vs_for",
+    "title": "Prepositions of Purpose and Direction: 'To' vs. 'For'",
+    "category": "Word Choice",
+    "target_words": ["to", "for"],
+    "source_name": "Merriam-Webster",
+    "source_url": "https://www.merriam-webster.com/dictionary/to",
+    "rule_summary": "Use 'to' with verbs (infinitive 'to + verb') to express intention, purpose, or movement toward a destination. Use 'for' with nouns or gerunds ('for + noun/-ing') to express benefit, purpose of an object, or duration.",
+    "proof": "Merriam-Webster English Usage: 'To functions as a preposition indicating direction, destination, or recipient, and as an infinitive marker indicating purpose (e.g., 'I called to ask a question'). For indicates intended recipient, benefit, or suitable use (e.g., 'a gift for you', 'a tool for cutting'). Never use 'for + infinitive' like 'for to see' in standard modern English.'",
+    "examples": [
+      {"incorrect": "I went to the store for buy food.", "correct": "I went to the store to buy food.", "note": "Use 'to + verb' for personal purpose/intent."},
+      {"incorrect": "This bottle is used to water storage.", "correct": "This bottle is used for water storage.", "note": "Use 'for + noun' to describe function/purpose."},
+      {"incorrect": "I apologized for to be late.", "correct": "I apologized for being late.", "note": "Preposition 'for' takes a gerund, not an infinitive."}
+    ],
+    "keywords": ["to", "for", "purpose", "infinitive", "destination", "recipient", "preposition", "prepositions of purpose"]
+  },
+  {
+    "id": "mw_preposition_by_vs_with",
+    "title": "Prepositions of Agent and Instrument: 'By' vs. 'With'",
+    "category": "Grammar",
+    "target_words": ["by", "with"],
+    "source_name": "Merriam-Webster",
+    "source_url": "https://www.merriam-webster.com/dictionary/by",
+    "rule_summary": "Use 'by' to specify the agent/doer of an action (especially in passive voice) or the mode of transport/method ('by car', 'by email'). Use 'with' to specify the instrument, tool, or accompaniment used ('with a pen', 'with a friend').",
+    "proof": "Merriam-Webster Guide to Prepositions: 'By indicates the agent performing the action (e.g., 'The book was written by Orwell') or the means/medium ('travel by train'). With designates the instrument, tool, or body part used by the agent ('The letter was written with a pen', 'He opened the lock with a key').'",
+    "examples": [
+      {"incorrect": "The paper was cut by scissors.", "correct": "The paper was cut with scissors.", "note": "Scissors are an instrument, so use 'with'."},
+      {"incorrect": "The painting was created with Leonardo.", "correct": "The painting was created by Leonardo.", "note": "Leonardo is the agent/doer, so use 'by'."},
+      {"incorrect": "I went to school with bus.", "correct": "I went to school by bus.", "note": "Methods of transportation use 'by + noun' without article."}
+    ],
+    "keywords": ["by", "with", "passive voice", "agent", "instrument", "tool", "means", "transportation", "preposition"]
+  },
+  {
+    "id": "mw_prepositions_in_on_at_time",
+    "title": "Prepositions of Time: 'In' vs. 'On' vs. 'At'",
+    "category": "Grammar",
+    "target_words": ["in", "on", "at"],
+    "source_name": "Merriam-Webster",
+    "source_url": "https://www.merriam-webster.com/grammar/top-10-commonly-confused-prepositions",
+    "rule_summary": "Use 'at' for precise clock times and specific points ('at 5 PM', 'at midnight'). Use 'on' for days and dates ('on Monday', 'on July 4th'). Use 'in' for non-specific times during a day, months, years, seasons, or longer periods ('in the morning', 'in 2026', 'in summer').",
+    "proof": "Merriam-Webster Reference: 'The rule of specificity dictates preposition choice for time: 'at' applies to the most specific points in time (clock hours, holiday points), 'on' applies to calendar days and dates, and 'in' encompasses broader time spans including months, seasons, years, decades, and parts of the day.'",
+    "examples": [
+      {"incorrect": "I will meet you in Monday.", "correct": "I will meet you on Monday.", "note": "Days of the week require 'on'."},
+      {"incorrect": "The concert begins on 8 PM.", "correct": "The concert begins at 8 PM.", "note": "Exact clock times require 'at'."},
+      {"incorrect": "We will travel at December.", "correct": "We will travel in December.", "note": "Months and seasons require 'in'."}
+    ],
+    "keywords": ["in", "on", "at", "preposition of time", "days", "dates", "clock time", "months", "time"]
+  },
+  {
+    "id": "mw_prepositions_in_on_at_place",
+    "title": "Prepositions of Place: 'In' vs. 'On' vs. 'At'",
+    "category": "Grammar",
+    "target_words": ["in", "on", "at"],
+    "source_name": "Merriam-Webster",
+    "source_url": "https://www.merriam-webster.com/grammar/top-10-commonly-confused-prepositions",
+    "rule_summary": "Use 'at' for a specific point, location, or address ('at the bus stop', 'at 123 Main St'). Use 'on' for a surface or street/avenue ('on the table', 'on 5th Avenue'). Use 'in' for an enclosed space, building interior, city, country, or large geographic area ('in the room', 'in Tokyo').",
+    "proof": "Merriam-Webster Usage Notes: 'For location, 'at' designates a point in space or destination ('at home', 'at the airport'); 'on' designates contact with a surface or line ('on the wall', 'on the floor', 'on the street'); 'in' designates being enclosed within three-dimensional limits, boundaries, or geographic territories ('in the box', 'in France').'",
+    "examples": [
+      {"incorrect": "He lives on Paris.", "correct": "He lives in Paris.", "note": "Cities and countries take 'in'."},
+      {"incorrect": "The keys are at the table.", "correct": "The keys are on the table.", "note": "Surfaces take 'on'."},
+      {"incorrect": "Wait for me in the bus stop.", "correct": "Wait for me at the bus stop.", "note": "Specific transit points take 'at'."}
+    ],
+    "keywords": ["in", "on", "at", "place", "location", "surface", "enclosed space", "address", "city"]
+  },
+  {
+    "id": "mw_between_vs_among",
+    "title": "Usage Guide: 'Between' vs. 'Among'",
+    "category": "Word Choice",
+    "target_words": ["between", "among"],
+    "source_name": "Merriam-Webster",
+    "source_url": "https://www.merriam-webster.com/grammar/between-or-among",
+    "rule_summary": "Use 'between' when naming distinct, individual persons, places, or items (even if there are more than two). Use 'among' when referring to distinct entities as an undifferentiated group, crowd, or collective mass.",
+    "proof": "Merriam-Webster Grammar FAQ: 'It is a common myth that between can only be used for two things and among for more than two. Merriam-Webster clarifies: between is used when individual, distinct items are being considered separately (e.g., 'negotiations between the three countries'). Among is used when items are part of a group, collective, or not distinct (e.g., 'a rumor spread among the students').'",
+    "examples": [
+      {"incorrect": "Divide the candies between the entire crowd.", "correct": "Divide the candies among the entire crowd.", "note": "An undifferentiated collective takes 'among'."},
+      {"incorrect": "Choose among red, blue, or green.", "correct": "Choose between red, blue, or green.", "note": "Explicitly named separate alternatives take 'between'."}
+    ],
+    "keywords": ["between", "among", "two items", "group", "collective", "preposition"]
+  },
+  {
+    "id": "mw_fewer_vs_less",
+    "title": "Usage Guide: 'Fewer' vs. 'Less'",
+    "category": "Word Choice",
+    "target_words": ["fewer", "less"],
+    "source_name": "Merriam-Webster",
+    "source_url": "https://www.merriam-webster.com/grammar/fewer-vs-less",
+    "rule_summary": "Use 'fewer' for countable nouns (things that can be counted individually, like books, people, dollars). Use 'less' for singular uncountable or mass nouns (like water, time, money, patience).",
+    "proof": "Merriam-Webster Usage Guide: 'The standard traditional rule is that fewer is used with plural count nouns ('fewer errors', 'fewer people'), while less is used with singular mass nouns ('less sugar', 'less effort'). Exception: less is standard with units of time, money, and distance considered as a single collective measurement ('less than five miles', 'less than $10').'",
+    "examples": [
+      {"incorrect": "There are less people here today.", "correct": "There are fewer people here today.", "note": "'People' is a countable plural noun."},
+      {"incorrect": "I drank fewer water today.", "correct": "I drank less water today.", "note": "'Water' is an uncountable mass noun."}
+    ],
+    "keywords": ["fewer", "less", "count noun", "mass noun", "uncountable", "countable", "quantity"]
+  },
+  {
+    "id": "mw_affect_vs_effect",
+    "title": "Commonly Confused Words: 'Affect' vs. 'Effect'",
+    "category": "Word Choice",
+    "target_words": ["affect", "effect"],
+    "source_name": "Merriam-Webster",
+    "source_url": "https://www.merriam-webster.com/grammar/affect-vs-effect",
+    "rule_summary": "'Affect' is almost always a verb meaning to influence or produce a change in something. 'Effect' is almost always a noun meaning the result, consequence, or outcome of a cause.",
+    "proof": "Merriam-Webster Grammar Guide: 'In nearly all everyday contexts, affect is the verb ('The weather affected our travel plans') and effect is the noun ('The medicine had a positive effect'). Tip: The initial 'A' in Affect is for Action (Verb); the initial 'E' in Effect is for End result (Noun).'",
+    "examples": [
+      {"incorrect": "The lack of sleep had a bad affect on my mood.", "correct": "The lack of sleep had a bad effect on my mood.", "note": "Outcome/result requires the noun 'effect'."},
+      {"incorrect": "The storm will effect our schedule tomorrow.", "correct": "The storm will affect our schedule tomorrow.", "note": "Action/influence requires the verb 'affect'."}
+    ],
+    "keywords": ["affect", "effect", "verb", "noun", "influence", "result", "confused words"]
+  },
+  {
+    "id": "mw_their_there_theyre",
+    "title": "Homophones: 'Their' vs. 'There' vs. 'They're'",
+    "category": "Spelling",
+    "target_words": ["their", "there", "they're"],
+    "source_name": "Merriam-Webster",
+    "source_url": "https://www.merriam-webster.com/grammar/how-to-use-theyre-there-their",
+    "rule_summary": "'Their' is possessive (belonging to them). 'There' refers to a place, location, or existential fact. 'They're' is a contraction of 'they are'.",
+    "proof": "Merriam-Webster Grammar FAQ: 'Their indicates ownership ('their coats'). There indicates place or introduction ('sit over there', 'there is a problem'). They're contains an apostrophe representing the omitted letter 'a' from the contraction 'they are' ('they're coming home'). Test: if you can substitute 'they are', use they're.'",
+    "examples": [
+      {"incorrect": "They left there backpacks behind.", "correct": "They left their backpacks behind.", "note": "Possession requires 'their'."},
+      {"incorrect": "Their going to the cinema tonight.", "correct": "They're going to the cinema tonight.", "note": "Contraction of 'they are' requires 'they're'."},
+      {"incorrect": "Put the books over their.", "correct": "Put the books over there.", "note": "Location requires 'there'."}
+    ],
+    "keywords": ["their", "there", "they're", "homophones", "possession", "location", "contraction"]
+  },
+  {
+    "id": "mw_its_vs_its",
+    "title": "Punctuation & Pronouns: 'Its' vs. 'It's'",
+    "category": "Punctuation",
+    "target_words": ["its", "it's"],
+    "source_name": "Merriam-Webster",
+    "source_url": "https://www.merriam-webster.com/grammar/when-to-use-its-vs-its",
+    "rule_summary": "'It's' (with an apostrophe) is exclusively a contraction of 'it is' or 'it has'. 'Its' (no apostrophe) is the possessive form of the neutral pronoun 'it'.",
+    "proof": "Merriam-Webster Language Notes: 'Unlike nouns, possessive pronouns in English never use apostrophes: hers, his, yours, ours, and its. The apostrophe in it's always signals a missing letter: it's = it is or it has. Test: replace the word with 'it is'—if the sentence still makes sense, use it's; otherwise use its.'",
+    "examples": [
+      {"incorrect": "The dog wagged it's tail.", "correct": "The dog wagged its tail.", "note": "Possession of 'it' has no apostrophe ('its')."},
+      {"incorrect": "Its going to rain today.", "correct": "It's going to rain today.", "note": "'It is' contracts to 'it's'."}
+    ],
+    "keywords": ["its", "it's", "possessive pronoun", "contraction", "apostrophe"]
+  },
+  {
+    "id": "mw_then_vs_than",
+    "title": "Commonly Confused Words: 'Then' vs. 'Than'",
+    "category": "Word Choice",
+    "target_words": ["then", "than"],
+    "source_name": "Merriam-Webster",
+    "source_url": "https://www.merriam-webster.com/grammar/when-to-use-then-and-than",
+    "rule_summary": "Use 'than' for comparisons ('greater than', 'other than'). Use 'then' to indicate sequence in time, consequence, or next steps ('now and then', 'first this, then that').",
+    "proof": "Merriam-Webster Guide: 'Than is a conjunction used to introduce the second element in a comparison ('She is taller than her brother'). Then is an adverb relating to time, consequence, or progression ('We finished our work, and then we left'). Quick mnemonic: Than and Comparison both have an 'a'; Then and Time both have an 'e'.'",
+    "examples": [
+      {"incorrect": "I would rather walk then drive.", "correct": "I would rather walk than drive.", "note": "Preference / comparison takes 'than'."},
+      {"incorrect": "First we eat, than we go out.", "correct": "First we eat, then we go out.", "note": "Sequence of events takes 'then'."}
+    ],
+    "keywords": ["then", "than", "comparison", "time", "sequence", "adverb", "conjunction"]
+  },
+  {
+    "id": "mw_who_vs_whom",
+    "title": "Pronoun Case: 'Who' vs. 'Whom'",
+    "category": "Grammar",
+    "target_words": ["who", "whom"],
+    "source_name": "Merriam-Webster",
+    "source_url": "https://www.merriam-webster.com/grammar/who-vs-whom-grammar-usage",
+    "rule_summary": "Use 'who' when the pronoun acts as the subject of a clause (the one doing the action). Use 'whom' when the pronoun acts as an object of a verb or preposition (the one receiving the action or following a preposition like 'to', 'for', 'with').",
+    "proof": "Merriam-Webster Usage Notes: 'Who is the subjective case pronoun (like 'he' or 'they'), whereas whom is the objective case pronoun (like 'him' or 'them'). Mnemonic test: replace the pronoun with he/him. If 'he' fits, use who ('Who wrote this? He wrote this'). If 'him' fits, use whom ('To whom did you give it? I gave it to him').'",
+    "examples": [
+      {"incorrect": "Whom is knocking at the door?", "correct": "Who is knocking at the door?", "note": "Subject doing the action takes 'who'."},
+      {"incorrect": "To who should I address this letter?", "correct": "To whom should I address this letter?", "note": "Object of the preposition 'to' takes 'whom'."}
+    ],
+    "keywords": ["who", "whom", "subject", "object", "preposition", "pronoun case"]
+  },
+  {
+    "id": "mw_lose_vs_loose",
+    "title": "Spelling & Word Choice: 'Lose' vs. 'Loose'",
+    "category": "Spelling",
+    "target_words": ["lose", "loose"],
+    "source_name": "Merriam-Webster",
+    "source_url": "https://www.merriam-webster.com/grammar/lose-vs-loose-usage",
+    "rule_summary": "'Lose' (one 'o') is a verb meaning to misplace something or suffer defeat. 'Loose' (two 'o's) is usually an adjective meaning not tight, free, or unbound.",
+    "proof": "Merriam-Webster Dictionary: 'Lose is a verb pronounced with a /z/ sound meaning to fail to keep, miss, or be deprived of ('Don't lose your keys'). Loose is an adjective pronounced with an /s/ sound meaning not securely attached or tight-fitting ('The knot is loose', 'loose clothing').'",
+    "examples": [
+      {"incorrect": "I don't want to loose my phone.", "correct": "I don't want to lose my phone.", "note": "Misplacing an object requires the verb 'lose'."},
+      {"incorrect": "This belt feels very lose.", "correct": "This belt feels very loose.", "note": "Not tight requires the adjective 'loose'."}
+    ],
+    "keywords": ["lose", "loose", "misplace", "tight", "verb", "adjective"]
+  },
+  {
+    "id": "mw_capitalization_pronoun_i",
+    "title": "Capitalization: The First-Person Pronoun 'I'",
+    "category": "Grammar",
+    "target_words": ["i", "I"],
+    "source_name": "Merriam-Webster",
+    "source_url": "https://www.merriam-webster.com/grammar/why-is-the-pronoun-i-capitalized",
+    "rule_summary": "The singular first-person subject pronoun 'I' must always be capitalized in standard English, regardless of where it appears in a sentence.",
+    "proof": "Merriam-Webster History of English: 'In standard English orthography, the pronoun 'I' is universally capitalized in all positions. This convention originated in Middle English manuscript writing to prevent the single miniscule letter from being visually lost or misread as a mark.'",
+    "examples": [
+      {"incorrect": "Yesterday i went for a walk.", "correct": "Yesterday I went for a walk.", "note": "The pronoun 'I' is always capitalized."},
+      {"incorrect": "My friend and i studied together.", "correct": "My friend and I studied together.", "note": "Capitalized even in compound subjects."}
+    ],
+    "keywords": ["i", "I", "pronoun", "capitalization", "first person"]
+  },
+  {
+    "id": "mw_spelling_a_lot",
+    "title": "Spelling: 'A lot' vs. 'Alot'",
+    "category": "Spelling",
+    "target_words": ["alot", "a lot"],
+    "source_name": "Merriam-Webster",
+    "source_url": "https://www.merriam-webster.com/grammar/words-commonly-confused-a-lot-alot",
+    "rule_summary": "'A lot' is always two separate words. 'Alot' is a nonstandard misspelling and is not accepted in formal or standard English.",
+    "proof": "Merriam-Webster Guide to Common Errors: 'The phrase meaning 'a large amount or number' is always spelled as two separate words: 'a lot'. The single-word form 'alot' is considered an outright error. Note also that 'allot' (double l) is an entirely different word meaning to distribute or allocate.'",
+    "examples": [
+      {"incorrect": "I learned alot from this course.", "correct": "I learned a lot from this course.", "note": "Always write as two words: 'a lot'."}
+    ],
+    "keywords": ["alot", "a lot", "spelling", "two words", "quantity"]
+  },
+  {
+    "id": "mw_contractions_apostrophe",
+    "title": "Punctuation: Contractions and Apostrophes (e.g. 'Don't', 'Can't')",
+    "category": "Punctuation",
+    "target_words": ["dont", "don't", "cant", "can't", "wont", "won't", "didnt", "didn't"],
+    "source_name": "Merriam-Webster",
+    "source_url": "https://www.merriam-webster.com/grammar/the-history-of-contractions-short-and-sweet",
+    "rule_summary": "In English contractions, an apostrophe replaces the missing letter or letters (e.g. don't for do not, can't for cannot, didn't for did not). Omitting the apostrophe forms a spelling error or an unrelated word.",
+    "proof": "Merriam-Webster Guide to Punctuation: 'The apostrophe in standard contractions marks the omission of one or more letters: do not becomes don't, cannot becomes can't, will not becomes won't. Without the apostrophe, words like cant or wont take on entirely different dictionary meanings.'",
+    "examples": [
+      {"incorrect": "I dont know the answer.", "correct": "I don't know the answer.", "note": "Contraction of 'do not' requires an apostrophe."}
+    ],
+    "keywords": ["dont", "don't", "cant", "can't", "contraction", "apostrophe", "omission"]
+  }
+]

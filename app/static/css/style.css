@@ -996,3 +996,254 @@ main.container {
         text-align: left;
     }
 }
+
+/* ============================================================
+   RAG Grounding & In-Text Highlight Styles
+   ============================================================ */
+
+/* Interactive Highlighted Words in User Writing */
+.ai-highlight-word {
+    background: #fef08a;
+    border-bottom: 2px solid #ca8a04;
+    border-radius: 3px;
+    padding: 0.05rem 0.25rem;
+    margin: 0;
+    color: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+    transition: background 0.12s ease, box-shadow 0.12s ease;
+}
+
+.ai-highlight-word:hover,
+.ai-highlight-word:focus {
+    background: #fde047;
+    box-shadow: 0 0 0 2px rgba(234, 179, 8, 0.45);
+    outline: none;
+}
+
+/* Legend hint above writing */
+.highlight-legend {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.82rem;
+    color: var(--color-text-muted);
+    background: #fffbeb;
+    border: 1px solid #fef3c7;
+    border-radius: var(--radius);
+    padding: 0.4rem 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.highlight-legend strong {
+    color: #92400e;
+}
+
+/* Floating RAG Proof Box (Popover) */
+.rag-proof-popover {
+    position: absolute;
+    z-index: 9999;
+    width: 340px;
+    max-width: 90vw;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+    box-shadow: 0 12px 30px -4px rgba(0, 0, 0, 0.16), 0 4px 12px -2px rgba(0, 0, 0, 0.08);
+    pointer-events: auto;
+    font-family: var(--font-sans);
+    line-height: 1.5;
+    animation: ragFadeIn 0.12s ease-out;
+}
+
+@keyframes ragFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(3px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.rag-proof-inner {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+}
+
+.rag-proof-header {
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 0.5rem;
+}
+
+.rag-proof-badges {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.3rem;
+}
+
+.badge-source {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border: 1px solid #bfdbfe;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.badge-category {
+    background: #f1f5f9;
+    color: #475569;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 600;
+}
+
+.rag-proof-rule-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.3;
+}
+
+.rag-proof-diff {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #f8fafc;
+    border-radius: 6px;
+    padding: 0.4rem 0.6rem;
+    font-family: var(--font-mono, monospace);
+    font-size: 0.9rem;
+}
+
+.diff-original {
+    color: #dc2626;
+    text-decoration: line-through;
+    font-weight: 600;
+}
+
+.diff-arrow {
+    color: #94a3b8;
+    font-size: 0.8rem;
+}
+
+.diff-correction {
+    color: #16a34a;
+    font-weight: 700;
+}
+
+.rag-proof-explanation {
+    font-size: 0.85rem;
+    color: #334155;
+    line-height: 1.45;
+}
+
+.rag-proof-citation {
+    background: #f8fafc;
+    border-left: 3.5px solid #2563eb;
+    border-radius: 0 6px 6px 0;
+    padding: 0.5rem 0.75rem;
+}
+
+.citation-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 700;
+    color: #2563eb;
+    margin-bottom: 0.2rem;
+}
+
+.citation-text {
+    font-size: 0.8rem;
+    font-style: italic;
+    color: #1e293b;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.rag-proof-footer {
+    margin-top: 0.25rem;
+}
+
+.rag-proof-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    background: #2563eb;
+    color: #ffffff !important;
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 0.45rem 0.75rem;
+    border-radius: 6px;
+    transition: background 0.12s ease;
+}
+
+.rag-proof-btn:hover {
+    background: #1d4ed8;
+}
+
+/* Card RAG Proof Details in Sidebar */
+.mistake-proof {
+    margin-top: 0.6rem;
+    padding-top: 0.6rem;
+    border-top: 1px dashed var(--color-border);
+}
+
+.proof-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.35rem;
+}
+
+.proof-badge {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border: 1px solid #bfdbfe;
+    border-radius: 4px;
+    padding: 0.1rem 0.4rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.proof-link {
+    color: var(--color-primary);
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.proof-link:hover {
+    text-decoration: underline;
+}
+
+.proof-text {
+    font-size: 0.82rem;
+    color: #334155;
+    font-style: italic;
+    background: #f8fafc;
+    border-left: 3px solid #2563eb;
+    padding: 0.4rem 0.6rem;
+    border-radius: 0 4px 4px 0;
+    margin: 0;
+}
+
+/* Highlight synced card */
+.mistake-card.highlighted-by-rag {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.25);
+    background: #f8fafc;
+}

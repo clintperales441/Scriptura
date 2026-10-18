@@ -10,7 +10,14 @@
     <div class="review-layout">
         <div class="review-original">
             <h2>Your Writing</h2>
+            {% if session.mistakes and session.mistakes|length > 0 %}
+            <div class="highlight-legend">
+                <span>💡 Hover over highlighted words to see <strong>Merriam-Webster</strong> proof & recommendations.</span>
+            </div>
+            <div class="text-display">{{ session.highlighted_original_text | safe }}</div>
+            {% else %}
             <div class="text-display">{{ session.original_text }}</div>
+            {% endif %}
             <p class="word-count-info">{{ session.original_word_count }} words</p>
 
             {% if session.original_scores %}
@@ -46,6 +53,19 @@
                         <div class="mistake-explanation">
                             <p>{{ mistake.explanation }}</p>
                         </div>
+                        {% if mistake.proof %}
+                        <div class="mistake-proof">
+                            <div class="proof-header">
+                                <span class="proof-badge">🏛️ {{ mistake.source_name or "Merriam-Webster" }}</span>
+                                {% if mistake.source_url %}
+                                <a href="{{ mistake.source_url }}" target="_blank" rel="noopener noreferrer" class="proof-link">
+                                    Official Reference ↗
+                                </a>
+                                {% endif %}
+                            </div>
+                            <p class="proof-text">{{ mistake.proof }}</p>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
                 {% endfor %}
@@ -110,4 +130,5 @@
         render();
     })();
 </script>
+<script src="/static/js/rag_proof_box.js"></script>
 {% endblock %}
