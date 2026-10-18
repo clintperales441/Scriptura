@@ -4,7 +4,7 @@ import pytest
 from app.services import practice_service
 from app.services.practice_service import count_words
 from app.services.review_service import MockReviewService
-from app.schemas.review import ReviewRequest
+from app.schemas.review import ReviewRequest, ReviewResponse, MistakeItem
 
 
 class TestCountWords:
@@ -229,3 +229,67 @@ class TestScoresDict:
             "engagement": 40,
             "overall": 70,
         }
+
+
+class TestBuildCorrectedText:
+    """Tests for assemble-in-place corrected text generation."""
+
+    def test_single_letter_does_not_corrupt_larger_words(self, db):
+        session = practice_service.create_session(
+            db, prompt_id=1, category="Everyday", difficulty="Beginner"
+        )
+        review = ReviewResponse(
+            mistakes=[
+                MistakeItem(
+                    original="i",
+                    correction="I",
+                    category="Grammar",
+                    explanation="Capitalize pronoun I",
+                )
+            ],
+            summary="Good.",
+            overall_feedback="Keep going.",
+        )
+        updated = practice_service.submit_writing(
+            db, session.id, "This is great and i like it.", review
+        )
+        corrected = practice_service.build_corrected_text(updated)
+        # Should fix 'i' without corrupting 'This' into 'ThIs'
+        assert corrected == "This is great and I like it."
+
+    def test_placeholder_deletion_handled_cleanly(self, db):
+        session = practice_service.create_session(
+            db, prompt_id=1, category="Everyday", difficulty="Beginner"
+        )
+        review = ReviewResponse(
+            mistakes=[
+                MistakeItem(
+                    original="very very",
+                    correction="(delete)",
+                    category="Clarity",
+                    explanation="Remove repetition",
+                )
+            ],
+            summary="Good.",
+            overall_feedback="Keep going.",
+        )
+        updated = practice_service.submit_writing(
+            db, session.id, "It was very very nice.", review
+        )
+        corrected = practice_service.build_corrected_text(updated)
+        assert "(delete)" not in corrected
+        assert "It was  nice." == corrected
+
+
+class TestFlaggedTextStillPresent:
+    """Tests for presence check with word boundaries and punctuation."""
+
+    def test_does_not_match_letter_inside_word(self):
+        # 'i' should not match inside 'This'
+        assert not practice_service._flagged_text_still_present("i", "This is nice.")
+        assert practice_service._flagged_text_still_present("i", "This is nice and i agree.")
+
+    def test_punctuation_check_handles_symbols(self):
+        assert practice_service._flagged_text_still_present(",", "Hello, world")
+        assert not practice_service._flagged_text_still_present(",", "Hello world")
+

@@ -52,12 +52,19 @@ def _session_to_template(session) -> dict:
         "rewrite_word_count": session.rewrite_word_count,
         "summary": session.summary,
         "overall_feedback": session.overall_feedback,
+        "highlighted_original_text": practice_service.render_highlighted_text(
+            session.original_text, session.mistakes
+        ),
         "mistakes": [
             {
                 "original": m.original_text,
                 "correction": m.correction,
                 "category": m.category,
                 "explanation": m.explanation,
+                "rule_name": m.rule_name,
+                "source_name": m.source_name,
+                "source_url": m.source_url,
+                "proof": m.proof,
             }
             for m in session.mistakes
         ],
@@ -238,20 +245,18 @@ async def submit_rewrite(
     if not existing_session:
         return RedirectResponse("/", status_code=303)
 
-    # Re-score the rewrite (a second review call) so the result page can
-    # show a before/after comparison, not just the original's scores.
-    # We deliberately ignore this second call's mistakes/summary -- only
-    # its `scores` are used, so we don't double up WritingMistake rows
-    # for what's fundamentally the same session's mistake history.
+    # Re-score the rewrite using a lightweight score_only call so the result
+    # page can show a before/after comparison without burning tokens on full
+    # mistake detection and feedback generation.
     rewrite_review_request = ReviewRequest(
         prompt=existing_session.prompt.text,
         writing=rewrite,
         category=existing_session.category,
         difficulty=existing_session.difficulty,
     )
-    rewrite_review = _review_service.review(rewrite_review_request)
+    rewrite_scores = _review_service.score_only(rewrite_review_request)
 
-    session = practice_service.submit_rewrite(db, session_id, rewrite, rewrite_review)
+    session = practice_service.submit_rewrite(db, session_id, rewrite, rewrite_scores)
     if not session:
         return RedirectResponse("/", status_code=303)
 

@@ -20,6 +20,10 @@ class WritingMistake(Base):
     category: Mapped[str] = mapped_column(String(50), nullable=False)
     explanation: Mapped[str] = mapped_column(Text, nullable=False)
     corrected_by_rewrite: Mapped[bool] = mapped_column(Boolean, default=False)
+    rule_name: Mapped[str | None] = mapped_column(String(150), nullable=True)
+    source_name: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    source_url: Mapped[str | None] = mapped_column(Text, nullable=True)
+    proof: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     # Relationship
     session: Mapped["PracticeSession"] = relationship(back_populates="mistakes")

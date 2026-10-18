@@ -21,6 +21,20 @@ async def lifespan(app: FastAPI):
     Base.metadata.create_all(bind=engine)
     logger.info("Database tables created.")
 
+    # Ensure any existing writing_mistakes table has new RAG columns
+    with engine.begin() as conn:
+        cursor = conn.exec_driver_sql("PRAGMA table_info(writing_mistakes)")
+        existing_cols = {row[1] for row in cursor.fetchall()}
+        if existing_cols:
+            if "rule_name" not in existing_cols:
+                conn.exec_driver_sql("ALTER TABLE writing_mistakes ADD COLUMN rule_name VARCHAR(150)")
+            if "source_name" not in existing_cols:
+                conn.exec_driver_sql("ALTER TABLE writing_mistakes ADD COLUMN source_name VARCHAR(100)")
+            if "source_url" not in existing_cols:
+                conn.exec_driver_sql("ALTER TABLE writing_mistakes ADD COLUMN source_url TEXT")
+            if "proof" not in existing_cols:
+                conn.exec_driver_sql("ALTER TABLE writing_mistakes ADD COLUMN proof TEXT")
+
     db = SessionLocal()
     try:
         inserted = seed_prompts(db)

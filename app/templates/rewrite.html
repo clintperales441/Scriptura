@@ -11,7 +11,7 @@
         <div class="rewrite-reference">
             <div class="reference-section">
                 <h3>Your Original Writing</h3>
-                <div class="text-display">{{ session.original_text }}</div>
+                <div class="text-display">{% if session.highlighted_original_text %}{{ session.highlighted_original_text | safe }}{% else %}{{ session.original_text }}{% endif %}</div>
             </div>
         </div>
 
@@ -47,4 +47,5 @@
         });
     }
 </script>
+<script src="/static/js/rag_proof_box.js"></script>
 {% endblock %}

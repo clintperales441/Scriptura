@@ -48,6 +48,7 @@ class TestMockReviewService:
         # Should return a response with no pattern-matched mistakes
         assert isinstance(result, ReviewResponse)
         assert result.summary  # Should always have a summary
+        assert len(result.mistakes) == 0
 
     def test_short_writing_feedback(self):
         result = self._review("Hello.")
@@ -190,3 +191,70 @@ class TestReviewResponseParsing:
         json_str = original.model_dump_json()
         parsed = ReviewResponse.model_validate_json(json_str)
         assert parsed == original
+
+
+class TestScoreOnly:
+    """Tests for lightweight score_only functionality."""
+
+    def test_mock_score_only_returns_writing_scores(self):
+        service = MockReviewService()
+        req = ReviewRequest(
+            prompt="Tell a story",
+            writing="Yesterday I went to the market and bought fresh fruit.",
+            category="Everyday",
+            difficulty="Intermediate",
+        )
+        scores = service.score_only(req)
+        assert scores is not None
+        assert 0 <= scores.grammar <= 100
+        assert 0 <= scores.fluency <= 100
+        assert 0 <= scores.clarity <= 100
+        assert 0 <= scores.engagement <= 100
+
+    def test_submit_rewrite_with_writing_scores_direct(self, db):
+        from app.services import practice_service
+        from app.schemas.review import WritingScores
+
+        session = practice_service.create_session(
+            db, prompt_id=1, category="Everyday", difficulty="Beginner"
+        )
+        scores = WritingScores(grammar=88, fluency=92, clarity=85, engagement=78)
+        updated = practice_service.submit_rewrite(
+            db, session.id, "Rewritten text here.", scores
+        )
+        assert updated.rewrite_grammar_score == 88
+        assert updated.rewrite_fluency_score == 92
+        assert updated.rewrite_clarity_score == 85
+        assert updated.rewrite_engagement_score == 78
+
+
+class TestTokenEfficientGeneration:
+    """Tests for token-efficient AI generation schema and token usage tracking."""
+
+    def test_parse_compact_generation_response(self):
+        from app.schemas.review import AiReviewGenerationResponse
+        from app.services.rag_service import rag_service
+
+        compact_data = {
+            "mistakes": [
+                {
+                    "original": "watering a plants",
+                    "correction": "water the plants",
+                    "category": "Grammar",
+                    "explanation": "Do not use 'a' with plural nouns.",
+                    "rule_id": "mw_articles_a_vs_an",
+                }
+            ],
+            "summary": "Good effort.",
+            "overall_feedback": "Keep practicing.",
+            "scores": {"grammar": 50, "fluency": 50, "clarity": 60, "engagement": 55},
+        }
+        validated = AiReviewGenerationResponse.model_validate(compact_data)
+        assert len(validated.mistakes) == 1
+        assert validated.mistakes[0].rule_id == "mw_articles_a_vs_an"
+
+        # RAG enrichment attaches Merriam-Webster proof without model output token cost
+        enriched = rag_service.enrich_review_response(validated)
+        assert enriched.mistakes[0].source_name == "Merriam-Webster"
+        assert "is-it-a-or-an" in enriched.mistakes[0].source_url
+        assert "vowel sound" in enriched.mistakes[0].proof.lower()
