@@ -34,10 +34,18 @@ class MistakeItem(BaseModel):
 
 class AiMistakeGenerationItem(BaseModel):
     """Token-efficient schema for AI generation without verbose repetitive proof text."""
-    original: str = Field(description="Exact verbatim substring from the student text.")
-    correction: str = Field(description="Grammatically corrected replacement.")
+    original: str = Field(
+        description="Exact verbatim span from the student text: a phrase, a whole sentence, "
+        "or 2-3 adjacent sentences when they need restructuring. Must not overlap other items."
+    )
+    correction: str = Field(
+        description="Drop-in replacement for `original`. For sentence-level items, a fully "
+        "restructured, natural rewrite that also fixes every error inside the span."
+    )
     category: MistakeCategory
-    explanation: str = Field(description="Concise 1-2 sentence explanation.")
+    explanation: str = Field(
+        description="1-3 sentences naming the specific problem and why the correction is better."
+    )
     rule_id: Optional[str] = Field(default=None, description="Optional ID of matching authoritative rule if applicable.")
 
 

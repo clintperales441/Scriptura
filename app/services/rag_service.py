@@ -19,6 +19,14 @@ logger = logging.getLogger(__name__)
 # Default path to curated grammar rules knowledge base
 DEFAULT_RULES_PATH = Path(__file__).resolve().parent.parent / "data" / "grammar_rules.json"
 
+# Spans longer than this many words are treated as sentence-level rewrites
+# rather than word/phrase fixes when grounding (see ground_mistake).
+SENTENCE_LEVEL_MIN_WORDS = 4
+
+# Merriam-Webster's general grammar & usage hub -- used as the reference link
+# for sentence-level rewrites that don't map to one specific rule.
+MW_GRAMMAR_HUB_URL = "https://www.merriam-webster.com/grammar"
+
 
 class GrammarKnowledgeBase:
     """In-memory index of authoritative grammar, article, preposition, and word usage rules."""
@@ -225,12 +233,33 @@ class RagService:
         if rule_id:
             matched_rule = self.kb.get_by_id(rule_id)
 
-        # 2. Heuristic retrieval fallback
-        if not matched_rule:
+        # Sentence-level rewrites (whole sentences / merged sentences) contain
+        # common function words like "a", "to", "the", which would make the
+        # keyword heuristic attach an unrelated article/preposition rule, and
+        # the dictionary fallback would fabricate a quote for a full sentence.
+        is_sentence_level = len(re.findall(r"\b\w+\b", orig)) > SENTENCE_LEVEL_MIN_WORDS
+
+        # 2. Heuristic retrieval fallback (phrase-level only)
+        if not matched_rule and not is_sentence_level:
             matched_rule = self.retrieve_for_mistake(
                 original=orig,
                 correction=corr,
                 category=cat,
+            )
+
+        if not matched_rule and is_sentence_level:
+            return MistakeItem(
+                original=orig,
+                correction=corr,
+                category=cat,
+                explanation=exp,
+                rule_id=rule_id,
+                rule_name=rule_name or f"{cat}: sentence-level revision",
+                source_name=source_name or "Merriam-Webster",
+                source_url=source_url or MW_GRAMMAR_HUB_URL,
+                # No proof: there's no single authoritative citation for a
+                # restructured sentence, so the explanation stands on its own.
+                proof=proof,
             )
 
         if matched_rule:
