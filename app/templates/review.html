@@ -12,7 +12,7 @@
             <h2>Your Writing</h2>
             {% if session.mistakes and session.mistakes|length > 0 %}
             <div class="highlight-legend">
-                <span>💡 Hover over highlighted words to see <strong>Merriam-Webster</strong> proof & recommendations.</span>
+                <span>💡 Hover or click highlighted text to inspect <strong>Merriam-Webster</strong> proof & jump to its word-by-word breakdown.</span>
             </div>
             <div class="text-display">{{ session.highlighted_original_text | safe }}</div>
             {% else %}
@@ -23,10 +23,17 @@
             {% if session.original_scores %}
             {{ scores_macro.score_bars(session.original_scores, "Writing Scores") }}
             {% endif %}
+
+            {% if session.overall_feedback %}
+            <div class="rewrite-focus-panel">
+                <h3>🎯 Focus for Your Rewrite</h3>
+                <p>{{ session.overall_feedback }}</p>
+            </div>
+            {% endif %}
         </div>
 
         <div class="review-feedback">
-            <h2>Feedback</h2>
+            <h2>Structured Feedback</h2>
 
             {% if session.summary %}
             <div class="feedback-summary">
@@ -40,20 +47,73 @@
                 <div class="mistake-card" data-index="{{ loop.index0 }}">
                     <div class="mistake-header">
                         <span class="badge badge-mistake">{{ mistake.category }}</span>
+                        {% if session.mistakes|length > 1 %}
+                        <span class="mistake-step-indicator">Sentence {{ loop.index }} of {{ session.mistakes|length }}</span>
+                        {% endif %}
                     </div>
                     <div class="mistake-body">
-                        <div class="mistake-original">
-                            <span class="label">Original:</span>
-                            <span class="text">{{ mistake.original }}</span>
+                        <div class="mistake-diff-panel">
+                            <div class="mistake-original">
+                                <span class="label">Original:</span>
+                                <span class="text">{{ mistake.original }}</span>
+                            </div>
+                            <div class="mistake-correction">
+                                <span class="label">Suggestion:</span>
+                                <span class="text">{{ mistake.correction }}</span>
+                            </div>
                         </div>
-                        <div class="mistake-correction">
-                            <span class="label">Suggestion:</span>
-                            <span class="text">{{ mistake.correction }}</span>
-                        </div>
+
                         <div class="mistake-explanation">
                             <p>{{ mistake.explanation }}</p>
                         </div>
-                        {% if mistake.proof %}
+
+                        {% if mistake.breakdown and mistake.breakdown|length > 0 %}
+                        <div class="word-breakdown-section">
+                            <div class="word-breakdown-header">
+                                <span class="word-breakdown-title">🔍 Word, Part-of-Speech &amp; Punctuation Breakdown</span>
+                                <span class="word-breakdown-count">{{ mistake.breakdown|length }} {{ "item" if mistake.breakdown|length == 1 else "items" }}</span>
+                            </div>
+                            <div class="word-breakdown-list">
+                                {% for part in mistake.breakdown %}
+                                <div class="breakdown-item">
+                                    <div class="breakdown-item-top">
+                                        <div class="breakdown-tokens">
+                                            {% if part.original_part in ["(missing)", "(added)", ""] %}
+                                            <span class="token-badge token-badge-added">+ Added</span>
+                                            <span class="token-suggested">{{ part.suggested_part }}</span>
+                                            {% elif part.suggested_part in ["(removed)", "(delete)", "(omit)", "(none)", ""] %}
+                                            <span class="token-badge token-badge-removed">− Removed</span>
+                                            <span class="token-original">{{ part.original_part }}</span>
+                                            {% elif part.original_part == part.suggested_part %}
+                                            <span class="token-kept">{{ part.suggested_part }}</span>
+                                            <span class="token-badge token-badge-kept">Retained</span>
+                                            {% else %}
+                                            <span class="token-original">{{ part.original_part }}</span>
+                                            <span class="token-arrow">➔</span>
+                                            <span class="token-suggested">{{ part.suggested_part }}</span>
+                                            {% endif %}
+                                        </div>
+                                        <span class="badge badge-pos">{{ part.part_of_speech }}</span>
+                                    </div>
+                                    <p class="breakdown-explanation">{{ part.explanation }}</p>
+                                    {% if part.proof %}
+                                    <div class="breakdown-proof">
+                                        <div class="proof-header">
+                                            <span class="proof-badge">🏛️ {{ part.source_name or "Merriam-Webster" }} — {{ part.rule_name or "Standard Rule" }}</span>
+                                            {% if part.source_url %}
+                                            <a href="{{ part.source_url }}" target="_blank" rel="noopener noreferrer" class="proof-link">
+                                                Official Reference ↗
+                                            </a>
+                                            {% endif %}
+                                        </div>
+                                        <p class="proof-text">{{ part.proof }}</p>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% elif mistake.proof %}
                         <div class="mistake-proof">
                             <div class="proof-header">
                                 <span class="proof-badge">🏛️ {{ mistake.source_name or "Merriam-Webster" }}</span>
@@ -92,15 +152,15 @@
 
 {% block scripts %}
 <script>
-    // One-card-at-a-time pager for the mistakes list, so the person
-    // doesn't have to scroll past every mistake to read the last one.
+    // One-card-at-a-time pager for the mistakes list, synchronized with
+    // in-text highlight hover/click via window.selectMistakeCard(idx).
     (function () {
         const cards = document.querySelectorAll('#mistakes-list .mistake-card');
         const prevBtn = document.getElementById('mistake-prev');
         const nextBtn = document.getElementById('mistake-next');
         const currentLabel = document.getElementById('mistake-current');
 
-        if (!cards.length || !prevBtn || !nextBtn) return;
+        if (!cards.length) return;
 
         let current = 0;
 
@@ -108,26 +168,36 @@
             cards.forEach((card, i) => {
                 card.style.display = i === current ? '' : 'none';
             });
-            currentLabel.textContent = current + 1;
-            prevBtn.disabled = current === 0;
-            nextBtn.disabled = current === cards.length - 1;
+            if (currentLabel) currentLabel.textContent = current + 1;
+            if (prevBtn) prevBtn.disabled = current === 0;
+            if (nextBtn) nextBtn.disabled = current === cards.length - 1;
         }
 
-        prevBtn.addEventListener('click', () => {
-            if (current > 0) {
-                current--;
+        window.selectMistakeCard = function (idx) {
+            const parsed = Number(idx);
+            if (!Number.isNaN(parsed) && parsed >= 0 && parsed < cards.length) {
+                current = parsed;
                 render();
             }
-        });
+        };
 
-        nextBtn.addEventListener('click', () => {
-            if (current < cards.length - 1) {
-                current++;
-                render();
-            }
-        });
+        if (prevBtn && nextBtn) {
+            prevBtn.addEventListener('click', () => {
+                if (current > 0) {
+                    current--;
+                    render();
+                }
+            });
 
-        render();
+            nextBtn.addEventListener('click', () => {
+                if (current < cards.length - 1) {
+                    current++;
+                    render();
+                }
+            });
+
+            render();
+        }
     })();
 </script>
 <script src="/static/js/rag_proof_box.js"></script>

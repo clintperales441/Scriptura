@@ -34,6 +34,8 @@ async def lifespan(app: FastAPI):
                 conn.exec_driver_sql("ALTER TABLE writing_mistakes ADD COLUMN source_url TEXT")
             if "proof" not in existing_cols:
                 conn.exec_driver_sql("ALTER TABLE writing_mistakes ADD COLUMN proof TEXT")
+            if "breakdown_json" not in existing_cols:
+                conn.exec_driver_sql("ALTER TABLE writing_mistakes ADD COLUMN breakdown_json TEXT")
 
     db = SessionLocal()
     try:

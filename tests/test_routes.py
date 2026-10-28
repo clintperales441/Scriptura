@@ -282,3 +282,38 @@ class TestScoring:
         assert "https://www.merriam-webster.com/" in response.text
         # Hover proof box script
         assert "rag_proof_box.js" in response.text
+
+    def test_review_page_renders_structured_sentence_and_word_pos_breakdown(self, client):
+        """Verify sentence-level suggestion is broken down by word, part of speech, and punctuation with RAG proof."""
+        response = client.post(
+            "/practice/start",
+            data={"category": "Everyday", "difficulty": "Beginner", "timer_minutes": "5"},
+        )
+        session_id = re.search(r'name="session_id" value="([^"]+)"', response.text).group(1)
+
+        response = client.post(
+            "/practice/submit",
+            data={
+                "session_id": session_id,
+                "writing": "urban city because it's lively",
+            },
+        )
+        assert response.status_code == 200
+        html_body = response.text
+        assert "I like eating in the city because it is lively." in html_body
+        assert "word-breakdown-section" in html_body
+        assert "badge-pos" in html_body
+        for pos_label in ("Pronoun", "Verb", "Noun", "Preposition", "Adjective", "Conjunction", "Punctuation"):
+            assert pos_label in html_body
+        assert "data-breakdown=" in html_body
+        assert "https://www.merriam-webster.com/dictionary/pleonasm" in html_body
+
+        # Result page also reconstructs the full corrected sentence cleanly
+        client.post(
+            f"/practice/rewrite/{session_id}",
+            data={"rewrite": "I like eating in the city because it is lively."},
+        )
+        result_resp = client.get(f"/practice/result/{session_id}")
+        assert result_resp.status_code == 200
+        assert "I like eating in the city because it is lively." in result_resp.text
+

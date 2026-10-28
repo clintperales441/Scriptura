@@ -1,5 +1,7 @@
 """WritingMistake model."""
 
+import json
+
 from sqlalchemy import String, Text, Boolean, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -24,9 +26,21 @@ class WritingMistake(Base):
     source_name: Mapped[str | None] = mapped_column(String(100), nullable=True)
     source_url: Mapped[str | None] = mapped_column(Text, nullable=True)
     proof: Mapped[str | None] = mapped_column(Text, nullable=True)
+    breakdown_json: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     # Relationship
     session: Mapped["PracticeSession"] = relationship(back_populates="mistakes")
+
+    @property
+    def breakdown(self) -> list[dict]:
+        """Deserialize structured word/POS/punctuation breakdown steps."""
+        if not self.breakdown_json:
+            return []
+        try:
+            parsed = json.loads(self.breakdown_json)
+            return parsed if isinstance(parsed, list) else []
+        except (ValueError, TypeError):
+            return []
 
 
 from app.models.practice_session import PracticeSession  # noqa: E402

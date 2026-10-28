@@ -167,3 +167,40 @@ class TestRenderHighlightedText:
         assert str(practice_service.render_highlighted_text("", [])) == ""
         clean_text = "Everything was completely perfect."
         assert str(practice_service.render_highlighted_text(clean_text, [])) == clean_text
+
+
+class TestPartOfSpeechBreakdownGrounding:
+    """Test purposeful RAG grounding across all parts of speech and punctuation."""
+
+    def setup_method(self):
+        self.service = RagService()
+
+    @pytest.mark.parametrize(
+        "orig,sugg,pos,exp,expected_rule_id",
+        [
+            ("advices", "advice", "Noun", "Uncountable noun does not take plural -s.", "mw_pos_noun_usage"),
+            ("(missing)", "I", "Pronoun", "Supply explicit subject pronoun.", "mw_pos_pronoun_clarity"),
+            ("taste", "tastes", "Verb", "Singular subject-verb agreement.", "mw_pos_verb_agreement_tense"),
+            ("lively", "lively", "Adjective", "Predicate adjective modifying city.", "mw_pos_adjective_precision"),
+            ("very", "extremely", "Adverb", "Replace weak intensifier adverb.", "mw_pos_adverb_usage"),
+            ("(missing)", "in", "Preposition", "Preposition of place for a city.", "mw_prepositions_in_on_at_place"),
+            ("because", "because", "Conjunction", "Subordinating conjunction introducing cause.", "mw_pos_conjunction_clauses"),
+            ("Oh", "Oh,", "Interjection", "Set off mild introductory interjection with a comma.", "mw_pos_interjection_register"),
+            ("(missing)", ".", "Punctuation", "End declarative sentence with a period.", "mw_punctuation_end_marks_caps"),
+            ("urban city", "city", "Adjective", "Remove redundant modifier (pleonasm).", "mw_redundancy_pleonasm"),
+        ],
+    )
+    def test_grounds_every_pos_and_mechanics_category(self, orig, sugg, pos, exp, expected_rule_id):
+        grounded = self.service.ground_breakdown_item(
+            {
+                "original_part": orig,
+                "suggested_part": sugg,
+                "part_of_speech": pos,
+                "explanation": exp,
+            }
+        )
+        assert grounded.rule_id == expected_rule_id
+        assert grounded.source_name == "Merriam-Webster"
+        assert grounded.source_url.startswith("https://www.merriam-webster.com/")
+        assert grounded.proof
+
