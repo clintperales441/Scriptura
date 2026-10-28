@@ -1,9 +1,9 @@
 /**
  * RAG Proof Box & Interactive Highlight Component
  * 
- * Provides an instant hover popover for AI-highlighted words with authoritative
- * proof, source citation, and direct reference links (e.g. Merriam-Webster).
- * Ensures immediate dismissal upon unhovering ("when unhover it will gone immediately").
+ * Provides an instant hover popover for AI-highlighted sentences/words with
+ * authoritative proof, part-of-speech breakdown chips, source citation, and
+ * direct reference links (Merriam-Webster), synced with the detailed card pager.
  */
 
 (function () {
@@ -41,6 +41,7 @@
                     <div class="rag-proof-explanation" id="rag-box-explanation">
                         Explanation
                     </div>
+                    <div class="rag-proof-pos-strip" id="rag-box-pos-strip" style="display: none;"></div>
                     <div class="rag-proof-citation">
                         <div class="citation-label">Authoritative Proof:</div>
                         <blockquote class="citation-text" id="rag-box-proof">
@@ -63,11 +64,47 @@
         const originalEl = document.getElementById('rag-box-original');
         const correctionEl = document.getElementById('rag-box-correction');
         const explanationEl = document.getElementById('rag-box-explanation');
+        const posStripEl = document.getElementById('rag-box-pos-strip');
         const proofEl = document.getElementById('rag-box-proof');
         const linkEl = document.getElementById('rag-box-link');
 
         let activeTarget = null;
         let isOverPopover = false;
+
+        function renderPosChips(rawBreakdown) {
+            if (!posStripEl) return;
+            posStripEl.innerHTML = '';
+            if (!rawBreakdown) {
+                posStripEl.style.display = 'none';
+                return;
+            }
+            try {
+                const items = JSON.parse(rawBreakdown);
+                if (!Array.isArray(items) || !items.length) {
+                    posStripEl.style.display = 'none';
+                    return;
+                }
+                items.slice(0, 6).forEach((entry) => {
+                    const chip = document.createElement('span');
+                    chip.className = 'rag-pos-chip';
+                    const posLabel = entry.pos || 'Grammar';
+                    const tokenLabel = entry.sugg && entry.sugg !== '(removed)'
+                        ? entry.sugg
+                        : `−${entry.orig || ''}`;
+                    chip.textContent = `${posLabel}: ${tokenLabel}`;
+                    posStripEl.appendChild(chip);
+                });
+                if (items.length > 6) {
+                    const more = document.createElement('span');
+                    more.className = 'rag-pos-chip rag-pos-chip-more';
+                    more.textContent = `+${items.length - 6} more`;
+                    posStripEl.appendChild(more);
+                }
+                posStripEl.style.display = 'flex';
+            } catch (_err) {
+                posStripEl.style.display = 'none';
+            }
+        }
 
         function showPopover(target) {
             activeTarget = target;
@@ -90,6 +127,7 @@
             originalEl.textContent = original;
             correctionEl.textContent = correction;
             explanationEl.textContent = explanation;
+            renderPosChips(target.dataset.breakdown);
             proofEl.textContent = `“${proof}”`;
             linkEl.href = sourceUrl;
             linkEl.textContent = `View on ${sourceName} ↗`;
@@ -128,24 +166,15 @@
             popover.className = `rag-proof-popover placement-${placement}`;
             popover.style.visibility = 'visible';
 
-            // Sync with sidebar card if available
+            // Sync with sidebar card pager if available
             if (mistakeIndex !== undefined) {
+                if (typeof window.selectMistakeCard === 'function') {
+                    window.selectMistakeCard(mistakeIndex);
+                }
                 const mistakeCards = document.querySelectorAll('.mistake-card');
                 mistakeCards.forEach((card, idx) => {
                     if (String(idx) === String(mistakeIndex)) {
                         card.classList.add('highlighted-by-rag');
-                        // If pager is used and hidden, reveal it
-                        if (card.style.display === 'none') {
-                            const currentLabel = document.getElementById('mistake-current');
-                            const prevBtn = document.getElementById('mistake-prev');
-                            const nextBtn = document.getElementById('mistake-next');
-                            mistakeCards.forEach((c, i) => {
-                                c.style.display = i === idx ? '' : 'none';
-                            });
-                            if (currentLabel) currentLabel.textContent = idx + 1;
-                            if (prevBtn) prevBtn.disabled = idx === 0;
-                            if (nextBtn) nextBtn.disabled = idx === mistakeCards.length - 1;
-                        }
                     } else {
                         card.classList.remove('highlighted-by-rag');
                     }
@@ -172,13 +201,17 @@
                 showPopover(word);
             });
 
+            word.addEventListener('click', () => {
+                if (word.dataset.index !== undefined && typeof window.selectMistakeCard === 'function') {
+                    window.selectMistakeCard(word.dataset.index);
+                }
+            });
+
             word.addEventListener('mouseleave', (e) => {
-                // If moving directly into the popover, don't close yet so user can click the reference link
                 const toElement = e.relatedTarget;
                 if (toElement && (toElement === popover || popover.contains(toElement))) {
                     return;
                 }
-                // Unhovered: gone immediately!
                 hidePopoverImmediately();
             });
 
@@ -194,12 +227,10 @@
 
         popover.addEventListener('mouseleave', (e) => {
             isOverPopover = false;
-            // If mouse moved back onto the active target, keep it
             const toElement = e.relatedTarget;
             if (toElement && activeTarget && (toElement === activeTarget || activeTarget.contains(toElement))) {
                 return;
             }
-            // Otherwise gone immediately!
             hidePopoverImmediately();
         });
 

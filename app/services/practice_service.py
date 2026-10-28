@@ -1,4 +1,5 @@
 import html
+import json
 import re
 import uuid
 from datetime import datetime, timezone
@@ -65,6 +66,15 @@ def submit_writing(
 
     # Save mistakes
     for mistake_data in review.mistakes:
+        breakdown_payload = None
+        if getattr(mistake_data, "breakdown", None):
+            breakdown_payload = json.dumps(
+                [
+                    b.model_dump() if hasattr(b, "model_dump") else dict(b)
+                    for b in mistake_data.breakdown
+                ]
+            )
+
         mistake = WritingMistake(
             session_id=session_id,
             original_text=mistake_data.original,
@@ -75,6 +85,7 @@ def submit_writing(
             source_name=mistake_data.source_name,
             source_url=mistake_data.source_url,
             proof=mistake_data.proof,
+            breakdown_json=breakdown_payload,
         )
         db.add(mistake)
 
@@ -282,6 +293,15 @@ def render_highlighted_text(text: str, mistakes: list) -> Markup:
 
         if found_span:
             claimed_spans.append(found_span)
+            raw_breakdown = _get_val(mistake, "breakdown", []) or []
+            compact_breakdown = [
+                {
+                    "orig": (b.get("original_part") if isinstance(b, dict) else getattr(b, "original_part", "")) or "",
+                    "sugg": (b.get("suggested_part") if isinstance(b, dict) else getattr(b, "suggested_part", "")) or "",
+                    "pos": (b.get("part_of_speech") if isinstance(b, dict) else getattr(b, "part_of_speech", "")) or "",
+                }
+                for b in raw_breakdown
+            ]
             m_dict = {
                 "original": orig,
                 "correction": _get_val(mistake, "correction"),
@@ -291,6 +311,7 @@ def render_highlighted_text(text: str, mistakes: list) -> Markup:
                 "source_name": _get_val(mistake, "source_name") or "Merriam-Webster",
                 "source_url": _get_val(mistake, "source_url") or f"https://www.merriam-webster.com/dictionary/{orig.lower()}",
                 "proof": _get_val(mistake, "proof") or _get_val(mistake, "explanation"),
+                "breakdown": json.dumps(compact_breakdown) if compact_breakdown else "",
             }
             matches.append((found_span[0], found_span[1], idx, m_dict))
 
@@ -313,7 +334,10 @@ def render_highlighted_text(text: str, mistakes: list) -> Markup:
         esc_url = html.escape(str(m_info["source_url"]))
         esc_proof = html.escape(str(m_info["proof"]))
         esc_exp = html.escape(str(m_info["explanation"]))
+        esc_breakdown = html.escape(str(m_info["breakdown"]))
         esc_word = html.escape(matched_text)
+
+        breakdown_attr = f'data-breakdown="{esc_breakdown}" ' if esc_breakdown else ""
 
         html_parts.append(
             f'<mark class="ai-highlight-word" '
@@ -326,6 +350,7 @@ def render_highlighted_text(text: str, mistakes: list) -> Markup:
             f'data-source-url="{esc_url}" '
             f'data-proof="{esc_proof}" '
             f'data-explanation="{esc_exp}" '
+            f'{breakdown_attr}'
             f'tabindex="0">'
             f'{esc_word}'
             f'</mark>'

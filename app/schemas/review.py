@@ -2,7 +2,7 @@
 
 from typing import Literal, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 # Fixed set of mistake categories. Constraining this (rather than letting the
 # AI free-text a category per mistake) is what makes category-based
@@ -18,9 +18,48 @@ MistakeCategory = Literal[
     "Clarity",
 ]
 
+# Explicit grammatical / mechanical roles used when breaking a sentence
+# rewrite down into individual words, phrases, and punctuation marks.
+GrammaticalRole = Literal[
+    "Noun",
+    "Pronoun",
+    "Verb",
+    "Adjective",
+    "Adverb",
+    "Preposition",
+    "Conjunction",
+    "Interjection",
+    "Article / Determiner",
+    "Punctuation",
+    "Capitalization",
+    "Spelling",
+    "Clause / Phrase",
+]
+
+
+def _require_breakdown_in_schema(schema: dict) -> None:
+    """Ensure `breakdown` is marked required in the JSON schema handed to Gemini,
+    while allowing Python callers/tests to omit it when constructing items manually."""
+    req = schema.setdefault("required", [])
+    if "breakdown" not in req:
+        req.append("breakdown")
+
+
+class WordBreakdownItem(BaseModel):
+    """A single word, part-of-speech, or punctuation breakdown step grounded with RAG evidence."""
+    original_part: str
+    suggested_part: str
+    part_of_speech: str
+    explanation: str
+    rule_id: Optional[str] = None
+    rule_name: Optional[str] = None
+    source_name: Optional[str] = None
+    source_url: Optional[str] = None
+    proof: Optional[str] = None
+
 
 class MistakeItem(BaseModel):
-    """A single identified mistake with optional RAG proof grounding."""
+    """A single identified mistake (sentence or phrase) with structured word breakdown and RAG proof."""
     original: str
     correction: str
     category: MistakeCategory
@@ -30,23 +69,71 @@ class MistakeItem(BaseModel):
     source_name: Optional[str] = None
     source_url: Optional[str] = None
     proof: Optional[str] = None
+    breakdown: list[WordBreakdownItem] = Field(default_factory=list)
+
+
+class AiBreakdownGenerationItem(BaseModel):
+    """Token-efficient word/POS/punctuation breakdown item for AI generation."""
+    original_part: str = Field(
+        description=(
+            "Exact word, short phrase, or punctuation from `original` being changed or explained, "
+            "or '(missing)' when a missing word or punctuation mark was added."
+        )
+    )
+    suggested_part: str = Field(
+        description=(
+            "Exact replacement word, short phrase, or punctuation in `correction`, "
+            "or '(removed)' when a redundant or erroneous word was deleted."
+        )
+    )
+    part_of_speech: GrammaticalRole = Field(
+        description="Specific part of speech or mechanics category of this element."
+    )
+    explanation: str = Field(
+        description=(
+            "1-2 sentences explaining WHY this specific word, part of speech, grammatical form, "
+            "or punctuation mark is used, changed, or removed in this sentence."
+        )
+    )
+    rule_id: Optional[str] = Field(
+        default=None,
+        description="ID of the matching authoritative reference rule if applicable.",
+    )
 
 
 class AiMistakeGenerationItem(BaseModel):
     """Token-efficient schema for AI generation without verbose repetitive proof text."""
+    model_config = ConfigDict(json_schema_extra=_require_breakdown_in_schema)
+
     original: str = Field(
-        description="Exact verbatim span from the student text: a phrase, a whole sentence, "
-        "or 2-3 adjacent sentences when they need restructuring. Must not overlap other items."
+        description=(
+            "Exact verbatim sentence (or 2 adjacent sentences when they must merge/split, or a phrase) "
+            "from the student text. Split multi-sentence writing sentence by sentence. Must never overlap."
+        )
     )
     correction: str = Field(
-        description="Drop-in replacement for `original`. For sentence-level items, a fully "
-        "restructured, natural rewrite that also fixes every error inside the span."
+        description=(
+            "Complete, natural drop-in replacement sentence for `original` that fixes all grammatical, "
+            "word-choice, structural, and punctuation issues while preserving the student's meaning."
+        )
     )
     category: MistakeCategory
     explanation: str = Field(
-        description="1-3 sentences naming the specific problem and why the correction is better."
+        description=(
+            "1-2 sentences summarizing the main structural or grammatical reason this sentence was revised."
+        )
     )
-    rule_id: Optional[str] = Field(default=None, description="Optional ID of matching authoritative rule if applicable.")
+    rule_id: Optional[str] = Field(
+        default=None,
+        description="Optional ID of the primary matching authoritative rule if applicable.",
+    )
+    breakdown: list[AiBreakdownGenerationItem] = Field(
+        default_factory=list,
+        description=(
+            "Step-by-step word, part-of-speech, and punctuation breakdown in reading order, "
+            "explaining every added, removed, replaced, or structurally important word and punctuation mark."
+        ),
+    )
 
 
 class TokenUsage(BaseModel):

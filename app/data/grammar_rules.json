@@ -23,14 +23,15 @@
     "target_words": ["the", "a", "an"],
     "source_name": "Merriam-Webster",
     "source_url": "https://www.merriam-webster.com/dictionary/the",
-    "rule_summary": "Use 'the' to refer to specific, unique, or previously mentioned nouns that both speaker and listener can identify. Do not use 'the' before plural or uncountable nouns when making general statements.",
-    "proof": "Merriam-Webster Dictionary & Grammar: 'The is a definite article used as a function word to indicate that a following noun refers to someone or something previously mentioned, known by common knowledge, or uniquely specified (e.g. the sun, the president). It is omitted when discussing concepts or plural items in general (e.g. 'I love nature', not 'the nature').'",
+    "rule_summary": "Use 'the' to refer to specific, unique, or contextually identifiable nouns (such as 'in the city' or 'the sun'). Omit 'the' before plural or uncountable nouns when making general statements.",
+    "proof": "Merriam-Webster Dictionary & Grammar: 'The is a definite article used as a function word to indicate that a following noun refers to someone or something previously mentioned, known by common knowledge, or uniquely specified in context (e.g. the city, the sun, the president). It is omitted when discussing abstract concepts or plural items in general (e.g. 'I love nature', not 'the nature').'",
     "examples": [
       {"incorrect": "I love the nature.", "correct": "I love nature.", "note": "General concepts do not take 'the'."},
       {"incorrect": "Pass me a salt.", "correct": "Pass me the salt.", "note": "Specific item in the immediate context takes 'the'."},
+      {"incorrect": "I like eating in city.", "correct": "I like eating in the city.", "note": "Singular countable noun 'city' requires the article 'the' in standard idiomatic location phrases."},
       {"incorrect": "He goes to the school by bus.", "correct": "He goes to school by bus.", "note": "Institutions used for their primary purpose do not take 'the'."}
     ],
-    "keywords": ["the", "definite article", "specific noun", "general noun", "nature", "omission of the", "zero article"]
+    "keywords": ["the", "definite article", "specific noun", "general noun", "nature", "omission of the", "zero article", "determiner"]
   },
   {
     "id": "mw_preposition_to_vs_for",
@@ -87,14 +88,14 @@
     "target_words": ["in", "on", "at"],
     "source_name": "Merriam-Webster",
     "source_url": "https://www.merriam-webster.com/grammar/top-10-commonly-confused-prepositions",
-    "rule_summary": "Use 'at' for a specific point, location, or address ('at the bus stop', 'at 123 Main St'). Use 'on' for a surface or street/avenue ('on the table', 'on 5th Avenue'). Use 'in' for an enclosed space, building interior, city, country, or large geographic area ('in the room', 'in Tokyo').",
-    "proof": "Merriam-Webster Usage Notes: 'For location, 'at' designates a point in space or destination ('at home', 'at the airport'); 'on' designates contact with a surface or line ('on the wall', 'on the floor', 'on the street'); 'in' designates being enclosed within three-dimensional limits, boundaries, or geographic territories ('in the box', 'in France').'",
+    "rule_summary": "Use 'at' for a specific point, venue, or address ('at the bus stop', 'at a café'). Use 'on' for a surface or street ('on the table', 'on 5th Avenue'). Use 'in' for an enclosed space, neighborhood, city, country, or geographic area ('in the room', 'in the city', 'in Tokyo').",
+    "proof": "Merriam-Webster Usage Notes: 'For location, 'at' designates a point in space or destination ('at home', 'at the airport'); 'on' designates contact with a surface or line ('on the wall', 'on the street'); 'in' designates being enclosed within three-dimensional limits, boundaries, or geographic territories ('in the city', 'in the box', 'in France').'",
     "examples": [
       {"incorrect": "He lives on Paris.", "correct": "He lives in Paris.", "note": "Cities and countries take 'in'."},
       {"incorrect": "The keys are at the table.", "correct": "The keys are on the table.", "note": "Surfaces take 'on'."},
       {"incorrect": "Wait for me in the bus stop.", "correct": "Wait for me at the bus stop.", "note": "Specific transit points take 'at'."}
     ],
-    "keywords": ["in", "on", "at", "place", "location", "surface", "enclosed space", "address", "city"]
+    "keywords": ["in", "on", "at", "place", "location", "surface", "enclosed space", "address", "city", "geographic"]
   },
   {
     "id": "mw_between_vs_among",
@@ -164,13 +165,13 @@
     "target_words": ["its", "it's"],
     "source_name": "Merriam-Webster",
     "source_url": "https://www.merriam-webster.com/grammar/when-to-use-its-vs-its",
-    "rule_summary": "'It's' (with an apostrophe) is exclusively a contraction of 'it is' or 'it has'. 'Its' (no apostrophe) is the possessive form of the neutral pronoun 'it'.",
-    "proof": "Merriam-Webster Language Notes: 'Unlike nouns, possessive pronouns in English never use apostrophes: hers, his, yours, ours, and its. The apostrophe in it's always signals a missing letter: it's = it is or it has. Test: replace the word with 'it is'—if the sentence still makes sense, use it's; otherwise use its.'",
+    "rule_summary": "'It's' (with an apostrophe) is exclusively a contraction of 'it is' or 'it has'. 'Its' (no apostrophe) is the possessive form of the neutral pronoun 'it'. In formal or polished prose, expanding 'it's' to 'it is' provides a clearer, less conversational tone.",
+    "proof": "Merriam-Webster Language Notes: 'Unlike nouns, possessive pronouns in English never use apostrophes: hers, his, yours, ours, and its. The apostrophe in it's always signals a missing letter: it's = it is or it has. In formal writing, full forms such as it is are often preferred over contractions for clarity and register.'",
     "examples": [
       {"incorrect": "The dog wagged it's tail.", "correct": "The dog wagged its tail.", "note": "Possession of 'it' has no apostrophe ('its')."},
       {"incorrect": "Its going to rain today.", "correct": "It's going to rain today.", "note": "'It is' contracts to 'it's'."}
     ],
-    "keywords": ["its", "it's", "possessive pronoun", "contraction", "apostrophe"]
+    "keywords": ["its", "it's", "it is", "possessive pronoun", "contraction", "apostrophe"]
   },
   {
     "id": "mw_then_vs_than",
@@ -250,14 +251,222 @@
     "id": "mw_contractions_apostrophe",
     "title": "Punctuation: Contractions and Apostrophes (e.g. 'Don't', 'Can't')",
     "category": "Punctuation",
-    "target_words": ["dont", "don't", "cant", "can't", "wont", "won't", "didnt", "didn't"],
+    "target_words": ["dont", "don't", "cant", "can't", "wont", "won't", "didnt", "didn't", "im", "i'm", "thats", "that's"],
     "source_name": "Merriam-Webster",
     "source_url": "https://www.merriam-webster.com/grammar/the-history-of-contractions-short-and-sweet",
-    "rule_summary": "In English contractions, an apostrophe replaces the missing letter or letters (e.g. don't for do not, can't for cannot, didn't for did not). Omitting the apostrophe forms a spelling error or an unrelated word.",
-    "proof": "Merriam-Webster Guide to Punctuation: 'The apostrophe in standard contractions marks the omission of one or more letters: do not becomes don't, cannot becomes can't, will not becomes won't. Without the apostrophe, words like cant or wont take on entirely different dictionary meanings.'",
+    "rule_summary": "In English contractions, an apostrophe replaces omitted letters (e.g. don't for do not, it's for it is). In formal or structured writing, expanding contractions ('do not', 'it is') creates a clearer, more polished register.",
+    "proof": "Merriam-Webster Guide to Punctuation: 'The apostrophe in standard contractions marks the omission of one or more letters: do not becomes don't, cannot becomes can't, it is becomes it's. Without the apostrophe, words like cant or wont take on unrelated meanings; in formal prose, writers frequently expand contractions into full verb phrases.'",
     "examples": [
       {"incorrect": "I dont know the answer.", "correct": "I don't know the answer.", "note": "Contraction of 'do not' requires an apostrophe."}
     ],
-    "keywords": ["dont", "don't", "cant", "can't", "contraction", "apostrophe", "omission"]
+    "keywords": ["dont", "don't", "cant", "can't", "contraction", "contractions", "apostrophe", "omission", "expand contraction"]
+  },
+  {
+    "id": "mw_pos_noun_usage",
+    "title": "Nouns: Countability, Plural Agreement & Gerunds",
+    "category": "Grammar",
+    "target_words": ["informations", "advices", "furnitures", "equipments"],
+    "source_name": "Merriam-Webster",
+    "source_url": "https://www.merriam-webster.com/dictionary/noun",
+    "rule_summary": "Singular countable nouns require a determiner ('a', 'an', 'the', 'my'), while uncountable nouns ('information', 'advice', 'furniture') do not take plural '-s' or 'a/an'. Gerunds ('-ing' forms like 'eating', 'reading') function as nouns when acting as subjects or objects of verbs such as 'like' or 'enjoy'.",
+    "proof": "Merriam-Webster Dictionary & Usage: 'A noun is a word that refers to a person, place, thing, quality, or action and functions as a subject or object of a verb or preposition. Singular count nouns take determiners (a café, the city), mass nouns remain singular without indefinite articles, and gerunds (-ing verbal nouns, e.g., 'I like eating') name activities as direct objects.'",
+    "examples": [
+      {"incorrect": "She gave me many good advices.", "correct": "She gave me much good advice.", "note": "'Advice' is an uncountable noun."},
+      {"incorrect": "I enjoy eat in restaurants.", "correct": "I enjoy eating in restaurants.", "note": "Use the gerund noun 'eating' as the object of 'enjoy'."}
+    ],
+    "keywords": ["noun", "nouns", "countable", "uncountable", "singular", "plural", "gerund", "direct object"]
+  },
+  {
+    "id": "mw_pos_pronoun_clarity",
+    "title": "Pronouns: Required Subject Pronouns, Case & Clear Antecedents",
+    "category": "Grammar",
+    "target_words": ["he", "she", "it", "they", "we", "me", "him", "her", "them", "us"],
+    "source_name": "Merriam-Webster",
+    "source_url": "https://www.merriam-webster.com/dictionary/pronoun",
+    "rule_summary": "Every finite English clause requires an explicit subject (such as 'I', 'it', 'they'). Use subject pronouns ('I', 'he', 'she', 'we', 'they') for the doer of the verb, object pronouns ('me', 'him', 'her', 'us', 'them') after verbs or prepositions, and ensure every pronoun has a clear noun antecedent.",
+    "proof": "Merriam-Webster Grammar Reference: 'A pronoun substitutes for a noun or noun phrase (its antecedent). Unlike pro-drop languages, standard English requires an explicit subject pronoun in declarative clauses (e.g., 'I like...' or 'It is lively'), distinguishes subjective from objective case, and requires each pronoun to point unmistakably to a specific noun.'",
+    "examples": [
+      {"incorrect": "Like eating in the city because is lively.", "correct": "I like eating in the city because it is lively.", "note": "Supply explicit subject pronouns 'I' and 'it'."},
+      {"incorrect": "Me and my friend went out.", "correct": "My friend and I went out.", "note": "Use subjective case 'I' in subject position."}
+    ],
+    "keywords": ["pronoun", "pronouns", "subject pronoun", "object pronoun", "antecedent", "missing subject"]
+  },
+  {
+    "id": "mw_pos_verb_agreement_tense",
+    "title": "Verbs: Subject-Verb Agreement, Tense Consistency & Linking Verbs",
+    "category": "Grammar",
+    "target_words": ["is", "are", "was", "were", "has", "have", "does", "do"],
+    "source_name": "Merriam-Webster",
+    "source_url": "https://www.merriam-webster.com/dictionary/verb",
+    "rule_summary": "Every complete clause needs a finite verb that agrees in person and number with its subject ('it is', 'she goes', 'they go') and maintains consistent tense. Linking verbs ('be', 'seem', 'feel', 'taste', 'look') connect the subject to a predicate adjective or noun.",
+    "proof": "Merriam-Webster Grammar Guide: 'A verb expresses an action, occurrence, or state of being and forms the syntactic center of a predicate. Finite verbs must agree with their subjects in number and person, maintain logical tense sequence across clauses, and when functioning as linking verbs (such as be, seem, become), take adjectival or nominal complements.'",
+    "examples": [
+      {"incorrect": "The soup taste great.", "correct": "The soup tastes great.", "note": "Singular subject 'soup' takes singular verb 'tastes'."},
+      {"incorrect": "Yesterday I walk to the market and buy fruit.", "correct": "Yesterday I walked to the market and bought fruit.", "note": "Past time marker 'Yesterday' requires past-tense verbs."}
+    ],
+    "keywords": ["verb", "verbs", "subject-verb agreement", "tense", "linking verb", "main verb", "auxiliary", "modal", "predicate"]
+  },
+  {
+    "id": "mw_pos_adjective_precision",
+    "title": "Adjectives: Modifying Nouns, Predicate Adjectives & '-ly' Adjectives",
+    "category": "Word Choice",
+    "target_words": ["lively", "friendly", "lovely", "good", "nice", "bad"],
+    "source_name": "Merriam-Webster",
+    "source_url": "https://www.merriam-webster.com/dictionary/adjective",
+    "rule_summary": "Adjectives describe or limit nouns and pronouns, placed either before a noun ('fresh food') or after a linking verb as a predicate adjective ('it is lively'). Note that several words ending in '-ly' (such as 'lively', 'friendly', 'lovely') are adjectives, not adverbs.",
+    "proof": "Merriam-Webster Dictionary & Usage: 'An adjective modifies a noun or pronoun to denote a quality or distinction, appearing attributively before a noun or predicatively after a linking verb (e.g., 'the city is lively'). Although -ly commonly marks adverbs, words formed by adding -ly to nouns—such as lively, friendly, and costly—are true adjectives.'",
+    "examples": [
+      {"incorrect": "The city is livelily at night.", "correct": "The city is lively at night.", "note": "'Lively' is a predicate adjective modifying 'city' after linking verb 'is'."},
+      {"incorrect": "We had a nice food.", "correct": "We had a delicious meal.", "note": "Choose precise adjectives that fit the noun."}
+    ],
+    "keywords": ["adjective", "adjectives", "predicate adjective", "modifier", "descriptive", "lively", "friendly"]
+  },
+  {
+    "id": "mw_redundancy_pleonasm",
+    "title": "Word Choice & Modifiers: Avoiding Redundancy (Pleonasm)",
+    "category": "Word Choice",
+    "target_words": ["urban city", "free gift", "past history", "return back", "repeat again", "end result", "advance warning"],
+    "source_name": "Merriam-Webster",
+    "source_url": "https://www.merriam-webster.com/dictionary/pleonasm",
+    "rule_summary": "Avoid pairing a modifier with a noun or verb whose definition already contains that exact meaning—for example, write 'city' instead of 'urban city' (since a city is inherently urban), 'gift' instead of 'free gift', and 'return' instead of 'return back'.",
+    "proof": "Merriam-Webster Usage & Style: 'Pleonasm is the use of more words than those necessary to denote mere sense (as in 'see with one's eyes' or 'urban city'). Because 'urban' means 'of, relating to, or characteristic of a city', 'urban city' repeats the same concept; trimming redundant modifiers makes prose tighter and more idiomatic.'",
+    "examples": [
+      {"incorrect": "I like eating in the urban city.", "correct": "I like eating in the city.", "note": "'City' already means an urban area, making 'urban' redundant."},
+      {"incorrect": "Please repeat that again.", "correct": "Please repeat that.", "note": "'Repeat' already means to say or do again."}
+    ],
+    "keywords": ["redundancy", "redundant", "pleonasm", "wordy", "wordiness", "urban city", "unnecessary modifier", "conciseness"]
+  },
+  {
+    "id": "mw_pos_adverb_usage",
+    "title": "Adverbs: Modifying Verbs & Replacing Weak Intensifiers ('Very', 'Really')",
+    "category": "Word Choice",
+    "target_words": ["very", "really", "quickly", "well"],
+    "source_name": "Merriam-Webster",
+    "source_url": "https://www.merriam-webster.com/dictionary/adverb",
+    "rule_summary": "Use adverbs (not adjectives) to modify action verbs, adjectives, or other adverbs (e.g. 'speaks fluently', 'plays well'). Replace overused weak intensifier adverbs like 'very' or 'really' + generic adjective with a single stronger adjective ('very good' -> 'excellent').",
+    "proof": "Merriam-Webster Grammar Guide: 'An adverb modifies a verb, an adjective, another adverb, or an entire clause, expressing manner, degree, time, or frequency (e.g., 'cooked well', not 'cooked good'). In careful writing, vague degree adverbs such as very and really are best replaced with a more exact descriptive word.'",
+    "examples": [
+      {"incorrect": "She speaks English very good.", "correct": "She speaks English very well.", "note": "Action verb 'speaks' requires the adverb 'well', not the adjective 'good'."},
+      {"incorrect": "The street market was very noisy.", "correct": "The street market was bustling.", "note": "Stronger word choice replaces 'very' + adjective."}
+    ],
+    "keywords": ["adverb", "adverbs", "intensifier", "manner", "frequency", "degree", "very", "really", "well"]
+  },
+  {
+    "id": "mw_everyday_vs_every_day",
+    "title": "Adjective vs. Adverbial Phrase: 'Everyday' vs. 'Every Day'",
+    "category": "Word Choice",
+    "target_words": ["everyday", "every day"],
+    "source_name": "Merriam-Webster",
+    "source_url": "https://www.merriam-webster.com/grammar/everyday-vs-every-day-difference-usage",
+    "rule_summary": "'Everyday' (one word) is an adjective meaning ordinary, routine, or commonplace, used directly before a noun ('everyday clothes'). 'Every day' (two words: determiner 'every' + noun 'day') functions adverbially to mean 'each day' ('I practice every day').",
+    "proof": "Merriam-Webster Usage Guide: 'Everyday is an adjective we use to describe something that is seen or used every day, meaning ordinary or typical ('everyday routines'). Every day is a two-word phrase meaning 'each day' ('I go there every day'). Test: if you can substitute 'each day', use two words.'",
+    "examples": [
+      {"incorrect": "I study English everyday.", "correct": "I study English every day.", "note": "Meaning 'each day' requires the two-word phrase 'every day'."}
+    ],
+    "keywords": ["everyday", "every day", "each day", "adjective", "adverbial"]
+  },
+  {
+    "id": "mw_pos_preposition_collocations",
+    "title": "Prepositions: Relational Function & Idiomatic Collocations",
+    "category": "Word Choice",
+    "target_words": ["of", "from", "about", "into", "during", "through"],
+    "source_name": "Merriam-Webster",
+    "source_url": "https://www.merriam-webster.com/dictionary/preposition",
+    "rule_summary": "A preposition combines with a noun phrase, pronoun, or '-ing' gerund (its object) to show location, direction, time, or logical relationship ('eat in the city', 'depend on', 'interested in', 'listen to'). Never follow a standard preposition directly with a bare base verb.",
+    "proof": "Merriam-Webster Dictionary & Grammar: 'A preposition is a function word that typically combines with a noun phrase to form a phrase which usually expresses a modification or predication (as 'in the city' modifying 'eating', or idiomatic pairings like 'depend on' and 'capable of'). Prepositions take nominal or gerund objects.'",
+    "examples": [
+      {"incorrect": "It depends of the weather.", "correct": "It depends on the weather.", "note": "The verb 'depend' pairs idiomatically with 'on'."},
+      {"incorrect": "She is interested to learn.", "correct": "She is interested in learning.", "note": "'Interested' takes 'in' + noun/gerund."}
+    ],
+    "keywords": ["preposition", "prepositions", "prepositional phrase", "collocation", "object of preposition"]
+  },
+  {
+    "id": "mw_pos_conjunction_clauses",
+    "title": "Conjunctions: Coordinating (FANBOYS) & Subordinating Conjunctions",
+    "category": "Sentence Structure",
+    "target_words": ["because", "although", "though", "since", "while", "whereas", "and", "but", "so", "yet"],
+    "source_name": "Merriam-Webster",
+    "source_url": "https://www.merriam-webster.com/dictionary/conjunction",
+    "rule_summary": "Coordinating conjunctions ('for, and, nor, but, or, yet, so') join grammatically equal words or two independent clauses (preceded by a comma). Subordinating conjunctions ('because', 'although', 'while', 'if', 'when') attach a dependent clause of cause, contrast, or time to a complete main clause; no comma precedes a standard restrictive 'because' clause.",
+    "proof": "Merriam-Webster Grammar Reference: 'A conjunction joins together sentences, clauses, phrases, or words. Coordinating conjunctions link elements of equal syntactic rank, whereas subordinating conjunctions (such as because, although, when) introduce a dependent clause that must attach to a complete independent clause to avoid a sentence fragment.'",
+    "examples": [
+      {"incorrect": "I stayed home. Because it was raining.", "correct": "I stayed home because it was raining.", "note": "Attach the subordinating 'because' clause directly to the main clause."},
+      {"incorrect": "Although it was late, but we kept working.", "correct": "Although it was late, we kept working.", "note": "Do not pair 'although' with 'but' in the same sentence."}
+    ],
+    "keywords": ["conjunction", "conjunctions", "coordinating conjunction", "subordinating conjunction", "because", "although", "clause", "fanboys"]
+  },
+  {
+    "id": "mw_pos_interjection_register",
+    "title": "Interjections & Register: Expressive Starters, Fillers & Punctuation",
+    "category": "Punctuation",
+    "target_words": ["oh", "wow", "well", "hey", "alas", "ouch", "hmm"],
+    "source_name": "Merriam-Webster",
+    "source_url": "https://www.merriam-webster.com/dictionary/interjection",
+    "rule_summary": "Interjections ('oh', 'wow', 'well', 'hey') express emotion or conversational reaction and stand grammatically apart from the clause. Set off mild introductory interjections with a comma ('Oh, I see.') and strong ones with an exclamation mark ('Wow!'), or omit casual spoken fillers in formal writing.",
+    "proof": "Merriam-Webster Dictionary & Usage: 'An interjection is an ejaculatory word or phrase (such as oh, alas, wow, or well) lacking grammatical connection to surrounding clauses and expressing sudden feeling or conversational transition. Mild interjections are followed by a comma; emphatic ones take an exclamation point.'",
+    "examples": [
+      {"incorrect": "Oh that restaurant is always crowded.", "correct": "Oh, that restaurant is always crowded.", "note": "Follow a mild introductory interjection with a comma."},
+      {"incorrect": "Well, like, the service is fast.", "correct": "The service is fast.", "note": "Remove spoken filler interjections in structured prose."}
+    ],
+    "keywords": ["interjection", "interjections", "exclamation", "filler", "conversational", "register", "oh", "wow", "well"]
+  },
+  {
+    "id": "mw_sentence_fragments",
+    "title": "Sentence Structure: Complete Sentences vs. Sentence Fragments",
+    "category": "Sentence Structure",
+    "target_words": [],
+    "source_name": "Merriam-Webster",
+    "source_url": "https://www.merriam-webster.com/dictionary/fragment",
+    "rule_summary": "A complete English sentence must contain at least one independent clause with an explicit subject (noun or pronoun) and a finite main verb expressing a complete thought. Standalone noun phrases or unattached dependent clauses ('urban city because it's lively') are fragments and need a main subject-verb clause.",
+    "proof": "Merriam-Webster Usage Guide: 'A sentence fragment is a word, phrase, or dependent clause punctuated as a sentence but lacking an independent subject-verb predicate (for example, a lone noun phrase plus a 'because' clause). Supplying an explicit subject and finite verb turns a fragment into a grammatically complete statement.'",
+    "examples": [
+      {"incorrect": "urban city because it's lively", "correct": "I like eating in the city because it is lively.", "note": "Adds main subject 'I', verb 'like', and object phrase 'eating in the city' to complete the fragment."},
+      {"incorrect": "For example, fresh fruit and vegetables.", "correct": "For example, I usually buy fresh fruit and vegetables.", "note": "Supplies a subject and main verb."}
+    ],
+    "keywords": ["fragment", "sentence fragment", "incomplete sentence", "missing subject", "missing verb", "independent clause", "complete sentence"]
+  },
+  {
+    "id": "mw_run_on_comma_splice",
+    "title": "Sentence Structure & Punctuation: Run-On Sentences and Comma Splices",
+    "category": "Punctuation",
+    "target_words": [],
+    "source_name": "Merriam-Webster",
+    "source_url": "https://www.merriam-webster.com/grammar/run-on-sentences",
+    "rule_summary": "Do not join two independent clauses with no punctuation (run-on/fused sentence) or with a comma alone (comma splice). Separate them with a period, link them with a semicolon, add a comma + coordinating conjunction (', and', ', but', ', so'), or subordinate one clause.",
+    "proof": "Merriam-Webster Grammar Guide: 'A run-on sentence occurs when two or more independent clauses are joined without an appropriate conjunction or mark of punctuation; a comma splice occurs when only a comma joins them. Fix them with terminal punctuation, a semicolon, a coordinating conjunction after a comma, or subordination.'",
+    "examples": [
+      {"incorrect": "The café was crowded, we found a quiet table.", "correct": "The café was crowded, but we found a quiet table.", "note": "Replaces comma splice with comma + coordinating conjunction 'but'."},
+      {"incorrect": "I woke up late I missed the bus.", "correct": "Because I woke up late, I missed the bus.", "note": "Subordinates the cause clause instead of fusing two clauses."}
+    ],
+    "keywords": ["run-on", "run on", "comma splice", "fused sentence", "independent clauses", "semicolon"]
+  },
+  {
+    "id": "mw_punctuation_end_marks_caps",
+    "title": "Punctuation & Capitalization: Sentence Capitals and Terminal Marks",
+    "category": "Punctuation",
+    "target_words": [],
+    "source_name": "Merriam-Webster",
+    "source_url": "https://www.merriam-webster.com/dictionary/punctuation",
+    "rule_summary": "Begin every sentence with a capital letter and close it with proper terminal punctuation: a period ('.') for declarative statements, a question mark ('?') for direct questions, or an exclamation point ('!') for emphatic exclamations.",
+    "proof": "Merriam-Webster Standard Mechanics: 'Punctuation marks clarify structural boundaries and grammatical relationships in written English. Every complete sentence opens with an uppercase letter and closes with a terminal mark—most commonly a period for statements, a question mark for inquiries, or an exclamation point for strong emotion.'",
+    "examples": [
+      {"incorrect": "my favorite dish is ramen", "correct": "My favorite dish is ramen.", "note": "Capitalize the opening word 'My' and end the statement with a period '.'."}
+    ],
+    "keywords": ["punctuation", "period", "full stop", "question mark", "exclamation", "capitalization", "capitalize", "uppercase", "terminal punctuation", "end mark"]
+  },
+  {
+    "id": "mw_punctuation_commas",
+    "title": "Punctuation: Commas with Introductory Elements, Clauses & Series",
+    "category": "Punctuation",
+    "target_words": ["however", "therefore", "moreover", "furthermore", "first", "finally"],
+    "source_name": "Merriam-Webster",
+    "source_url": "https://www.merriam-webster.com/dictionary/comma",
+    "rule_summary": "Use a comma after an introductory dependent clause ('When I arrive, I make coffee.'), after introductory transitions ('However,', 'For example,'), before a coordinating conjunction joining two independent clauses, and between items in a list. Do not place a comma between a subject and its verb.",
+    "proof": "Merriam-Webster Punctuation Guide: 'A comma separates structural elements within a sentence: setting off introductory adverbial clauses or transitional adverbs, separating items in a coordinate series, and preceding a coordinating conjunction that links two independent clauses.'",
+    "examples": [
+      {"incorrect": "When I wake up I drink water.", "correct": "When I wake up, I drink water.", "note": "Place a comma after the introductory 'When' clause."},
+      {"incorrect": "However I prefer working from home.", "correct": "However, I prefer working from home.", "note": "Set off conjunctive adverb 'However' with a comma."}
+    ],
+    "keywords": ["comma", "commas", "introductory clause", "transition", "list", "series", "oxford comma"]
   }
 ]

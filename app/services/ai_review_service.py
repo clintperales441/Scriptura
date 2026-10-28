@@ -1,9 +1,11 @@
 """AI-powered review service using Gemini API.
 
 Implements the ReviewService Protocol to provide real AI writing analysis
-using Google's Gemini models with structured JSON output.
+using Google's Gemini models with structured JSON output, sentence-by-sentence
+suggestions, word/part-of-speech/punctuation breakdowns, and RAG grounding.
 """
 
+import difflib
 import json
 import logging
 import os
@@ -16,83 +18,86 @@ from google.genai import types
 from pydantic import ValidationError
 
 from app.schemas.review import (
-    ReviewRequest,
-    ReviewResponse,
-    MistakeItem,
-    WritingScores,
+    AiBreakdownGenerationItem,
     AiMistakeGenerationItem,
     AiReviewGenerationResponse,
+    GrammaticalRole,
+    ReviewRequest,
+    ReviewResponse,
     TokenUsage,
+    WritingScores,
 )
 from app.services.rag_service import rag_service
 
 logger = logging.getLogger(__name__)
 
-# Multi-layer writing evaluator prompt. The previous version only asked for
-# snippet-level fixes, so the model patched single words and the "corrected"
-# text ended up ~90% identical to the original -- grammatical, but with the
-# same choppy structure, vague wording, and logical gaps. This version makes
-# the model evaluate every sentence at four layers and rewrite whole
-# sentences (or adjacent groups) when the problem is structural.
-REVIEW_SYSTEM_PROMPT = """You are a senior English writing coach. Your job is not just to proofread but to make the student's writing genuinely better -- clearer, more natural, and better structured -- while keeping their ideas and voice.
+# Detailed sentence-and-word grammar coach prompt.
+# Instead of giving a rough, high-level summary report, the model splits the
+# student's writing sentence by sentence, provides a complete natural rewrite
+# for each sentence that needs work, AND breaks each sentence down by word,
+# part of speech, and punctuation mark with RAG rule grounding.
+REVIEW_SYSTEM_PROMPT = """You are a senior English grammar and writing coach. Never give a rough, generic summary report. Teach the student clearly by splitting their writing sentence by sentence AND breaking each revised sentence down into its words, parts of speech, and punctuation marks.
 
-REVIEW IN FOUR LAYERS. Read the whole text first, then check EVERY sentence against each layer:
-1. Mechanics: grammar, verb tense, agreement, articles, prepositions, spelling, punctuation, capitalization.
-2. Word choice: vague or generic words, repetition, unnatural or non-native collocations ("do a decision" -> "make a decision"), weak verbs propped up by adverbs, filler, register that is too informal for the task.
-3. Sentence structure: run-ons, comma splices, fragments, choppy strings of short sentences, awkward word order, wordiness/redundancy, missing or misused transitions, monotonous sentence openings.
-4. Clarity & logic: unclear references ("it", "this", "they"), missing words or steps that leave a gap in meaning, ideas in a confusing order, sentences with no visible connection to the previous one.
+STEP 1 — EVALUATE EVERY SENTENCE IN FOUR LAYERS:
+Read the writing prompt and the whole submission first, then inspect EVERY sentence (including fragments and run-ons) across all four layers:
+1. Mechanics & Punctuation: sentence-initial capitalization, pronoun "I", periods/question marks/exclamation points, commas, apostrophes, contractions, spelling.
+2. Parts of Speech & Grammar:
+   - Noun: singular/plural agreement, countable vs. uncountable nouns, gerunds (-ing verbal nouns after verbs like "like" or "enjoy").
+   - Pronoun: required explicit subject pronouns ("I", "it", "they"), subject vs. object case, clear noun antecedents.
+   - Verb: finite main verb presence, subject-verb agreement, tense consistency, linking verbs ("is", "seem", "feel") vs. action verbs, infinitives ("to + verb").
+   - Adjective & Adverb: precise adjectives vs. vague ones, predicate adjectives (including "-ly" adjectives such as "lively" or "friendly"), removing weak intensifiers ("very", "really"), using adverbs to modify action verbs ("well", "quickly").
+   - Article / Determiner: "a" vs. "an" (by vowel/consonant sound), definite "the" vs. zero article.
+   - Preposition: place/time prepositions ("in", "on", "at"), purpose/agent prepositions ("to", "for", "by", "with"), idiomatic collocations.
+   - Conjunction: coordinating conjunctions (for, and, nor, but, or, yet, so) and subordinating conjunctions ("because", "although", "while", "when", "if").
+   - Interjection: expressive starters or spoken fillers ("oh", "wow", "well", "hey") and their comma/exclamation punctuation or formal removal.
+3. Word choice & conciseness: redundant modifiers/pleonasm (e.g. "urban city" -> "city" because a city is already urban), unnatural collocations, register suited to the prompt.
+4. Sentence structure & clarity: sentence fragments missing a subject or main verb, run-ons, comma splices, choppy clauses, awkward word order, missing logical links.
 
-CHOOSING THE SPAN TO FIX:
-- Word/phrase level: if the sentence is otherwise sound, fix only the smallest phrase (e.g. "a apple" -> "an apple").
-- Sentence level: if a sentence has a structure, clarity, or flow problem -- or has two or more problems of any kind -- set "original" to the WHOLE sentence and rewrite it completely. The rewrite must also fix every mechanical error inside it; do NOT list those smaller errors separately.
-- Multi-sentence: when two or three adjacent sentences should be merged, split, or reordered to read well, set "original" to that whole stretch (verbatim, including the spaces between sentences) and give the restructured version.
-- Spans must NEVER overlap. Each piece of the student's text belongs to at most one item.
+STEP 2 — SPLIT MULTI-SENTENCE TEXT SENTENCE BY SENTENCE (`mistakes`):
+- Create one item in `mistakes` (in reading order) for EACH sentence that has any error or needs improvement.
+- Set `original` to the WHOLE verbatim sentence from the student's text (or 2 adjacent sentences ONLY when fragments/choppy sentences must merge or a run-on must split; if a long, otherwise fluent sentence has only one isolated typo, you may still show the full sentence or exact phrase, but NEVER overlap spans).
+- Set `correction` to the complete, natural rewritten sentence. Preserve the student's meaning and point of view. When a student writes a fragment (e.g. "urban city because it's lively" in response to a prompt about a favorite place to eat), use the prompt context to supply the implied subject and verb ("I like eating in the city because it is lively.").
+- Set `explanation` to 1-2 clear sentences stating the main structural or grammatical transformation of that sentence.
 
-WHAT COUNTS AS A REAL CORRECTION:
-- It must read the way a fluent, skilled writer would naturally express the same idea -- not the original with one word swapped. If an awkward sentence still sounds awkward after your change, you have not fixed it.
-- Keep the student's meaning, ideas, and point of view. Do not invent facts, examples, or opinions they did not express. You may add a connecting word or make an implied idea explicit when it fills a real gap.
-- Match the target level (see DIFFICULTY GUIDANCE): lift vocabulary and structure one clear step above what the student wrote, without jumping to language they cannot learn from.
-- "original" must be copied verbatim from the student's text (same casing, spelling, punctuation). "correction" is a drop-in replacement for exactly that span.
+STEP 3 — SPLIT EACH SENTENCE INTO WORDS, PARTS OF SPEECH & PUNCTUATION (`breakdown`):
+- Inside EVERY `mistakes` item, populate `breakdown` in reading order to explain every changed, added, removed, or structurally important word and punctuation mark.
+- Split multi-word additions into distinct grammatical roles rather than lumping a whole clause into one row (for example: "I" -> Pronoun, "like" -> Verb, "eating" -> Noun [gerund], "in" -> Preposition, "the" -> Article / Determiner, "urban city" -> "city" -> Adjective, "because" -> Conjunction, "it's" -> "it is" -> Pronoun / Verb, "lively" -> Adjective, "." -> Punctuation).
+- For added elements, set `original_part` to "(missing)" and `suggested_part` to the added word or punctuation mark.
+- For deleted redundant/incorrect elements, set `original_part` to the removed word (or phrase like "urban city") and `suggested_part` to "(removed)" (or the tightened replacement like "city").
+- For short restructured sentences, also include key retained connectors or predicates (such as subordinating conjunction "because" or predicate adjective "lively") when explaining their part of speech clarifies how the sentence works.
+- In each `breakdown` item's `explanation`, explicitly name the part of speech / mechanical role and explain WHY that exact word, form, or punctuation mark is required or preferred. Never write vague phrases like "sounds better" or "improves flow" without stating the grammatical reason.
+- Set `rule_id` on both the sentence item and each `breakdown` item whenever one of the AUTHORITATIVE REFERENCE RULES applies.
 
-FIELDS:
-- "category": the main reason for the change -- one of "Grammar", "Spelling", "Punctuation", "Word Choice", "Sentence Structure", "Clarity". For sentence-level rewrites use the dominant problem (usually "Sentence Structure" or "Clarity").
-- "explanation": 1-3 sentences. Name the specific problem and the principle that makes the correction better (e.g. "These two short sentences both start with 'I' and hide the cause-and-effect; joining them with 'because' shows the connection and removes the repetition."). Never write vague feedback like "improves flow" or "better wording" without saying why.
-- "rule_id": if the change is covered by one of the reference rules below, use that rule's ID (e.g. "mw_articles_a_vs_an"); otherwise null.
-- "summary": 2-3 sentences on the student's main recurring weaknesses across the whole text -- patterns, not a list of individual errors.
-- "overall_feedback": 2-3 concrete, prioritized things to practice next, phrased as actions (e.g. "Combine related short sentences with 'because', 'although', or 'which'.").
-
-SCORES (0-100), anchored to bands: 0-39 major problems, 40-59 noticeable issues, 60-79 developing, 80-100 strong.
-- grammar: correctness & mechanics
-- fluency: natural flow and sentence variety
-- clarity: organization, logical connection, ease of understanding
-- engagement: voice, precision & richness of vocabulary
-Text that is grammatically correct but flat, choppy, or vague must NOT score high on fluency, clarity, or engagement.
+SUMMARY, OVERALL FEEDBACK & SCORES:
+- `summary`: 2-3 sentences diagnosing recurring grammatical, part-of-speech, and structural patterns across the submission.
+- `overall_feedback`: 2-3 concrete, prioritized actions naming specific parts of speech, clause structures, or punctuation habits to apply in the rewrite.
+- `scores` (0-100), anchored to bands: 0-39 major problems, 40-59 noticeable issues, 60-79 developing, 80-100 strong across `grammar`, `fluency`, `clarity`, and `engagement`.
 
 DO NOT:
-- Change correct, natural phrasing just to impose your own style.
-- Stop after the obvious errors -- every sentence must be considered at all four layers.
-- Return a "correction" identical to its "original"."""
+- Give only a general paragraph summary without populating `breakdown` for each revised sentence.
+- Change already accurate, natural sentences just to impose personal style.
+- Overlap `original` spans or return a `correction` identical to `original`."""
 
 # Per-level guidance so corrections stretch the learner by one step instead
 # of either barely touching the text or rewriting it beyond their reach.
 DIFFICULTY_GUIDANCE = {
     "Beginner": (
-        "Corrections should use clear, simple sentences and common everyday vocabulary. "
-        "Prioritize correctness and basic connectors (and, but, because, so, when). "
-        "Join choppy sentences, but avoid long or heavily embedded clauses."
+        "Corrections should use clear, complete simple or compound sentences and everyday vocabulary. "
+        "Prioritize explicit subjects and verbs, articles, prepositions, capitalization, periods, and basic "
+        "conjunctions (and, but, because, so, when). Explain parts of speech in accessible, beginner-friendly terms."
     ),
     "Intermediate": (
         "Corrections should vary sentence length and structure (compound and complex sentences, "
-        "relative clauses) and use precise, natural vocabulary and common collocations. "
-        "Cut wordiness and add transitions wherever ideas connect."
+        "relative clauses) and use precise vocabulary and natural collocations. "
+        "Eliminate redundancy, weak intensifiers, and comma splices, explaining clause connectors and modifiers clearly."
     ),
     "Advanced": (
-        "Corrections should be concise, cohesive, and idiomatic, with sophisticated but natural "
-        "vocabulary, varied syntax (subordination, participial phrases, parallelism), and smooth "
-        "logical transitions. Flag anything that reads as wordy, generic, or non-native."
+        "Corrections should be concise, cohesive, and idiomatic, with sophisticated natural "
+        "vocabulary, varied syntax (subordination, participial phrases, parallelism), and crisp "
+        "punctuation. Flag subtle register, collocation, and pleonasm issues with rigorous grammatical explanations."
     ),
 }
- 
+
 # Lightweight system prompt for re-scoring rewrites without burning tokens on full review
 SCORE_ONLY_SYSTEM_PROMPT = """You are an expert English writing evaluator. Your task is to score a student's writing across four dimensions (0-100).
 
@@ -111,6 +116,14 @@ DIMENSIONS:
 
 Score based on the writing actually submitted, not on what an ideal rewrite would look like. Do not let one bad dimension drag down another unrelated one.
 Return only the four scores as JSON matching the requested schema."""
+
+
+_PRONOUNS = {"i", "me", "my", "mine", "you", "your", "he", "him", "his", "she", "her", "it", "its", "we", "us", "our", "they", "them", "their", "who", "whom", "this", "that", "these", "those"}
+_ARTICLES = {"a", "an", "the"}
+_PREPOSITIONS = {"in", "on", "at", "to", "for", "by", "with", "of", "from", "about", "into", "between", "among", "during", "through", "over", "under"}
+_CONJUNCTIONS = {"and", "but", "or", "nor", "so", "yet", "because", "although", "though", "since", "while", "whereas", "if", "when", "unless"}
+_INTERJECTIONS = {"oh", "wow", "well", "hey", "alas", "ouch", "hmm"}
+_COMMON_VERBS = {"am", "is", "are", "was", "were", "be", "been", "being", "have", "has", "had", "do", "does", "did", "can", "could", "will", "would", "should", "may", "might", "must", "go", "went", "walk", "like", "love", "enjoy", "eat", "come", "comes"}
 
 
 def _clean_json(text: str) -> str:
@@ -136,6 +149,83 @@ def _span_pattern(snippet: str) -> str:
     return prefix + re.escape(snippet) + suffix
 
 
+def _infer_role(orig_tok: str, sugg_tok: str) -> GrammaticalRole:
+    """Infer a sensible GrammaticalRole for synthesized fallback breakdown steps."""
+    target = (sugg_tok if sugg_tok != "(removed)" else orig_tok).strip()
+    low = target.lower()
+    if target in {".", ",", "!", "?", ";", ":"} or (not re.search(r"\w", target) and target):
+        return "Punctuation"
+    if orig_tok and sugg_tok and orig_tok.lower() == sugg_tok.lower() and orig_tok != sugg_tok:
+        return "Capitalization"
+    if low in _ARTICLES:
+        return "Article / Determiner"
+    if low in _PRONOUNS or low in {"it's", "they're"}:
+        return "Pronoun"
+    if low in _PREPOSITIONS:
+        return "Preposition"
+    if low in _CONJUNCTIONS:
+        return "Conjunction"
+    if low in _INTERJECTIONS:
+        return "Interjection"
+    if low in _COMMON_VERBS or low.endswith(("ed", "ing")):
+        return "Verb"
+    if low.endswith("ly") and low not in {"lively", "friendly", "lovely", "lonely"}:
+        return "Adverb"
+    if low in {"lively", "friendly", "lovely", "good", "nice", "bad", "urban", "far", "quite"}:
+        return "Adjective"
+    if " " in target:
+        return "Clause / Phrase"
+    return "Noun"
+
+
+def _ensure_breakdown(item: AiMistakeGenerationItem) -> AiMistakeGenerationItem:
+    """Guarantee every mistake item has at least one structured word/punctuation breakdown step."""
+    if item.breakdown:
+        return item
+
+    orig_tokens = re.findall(r"\w+(?:'\w+)?|[.!?,;:]", item.original or "")
+    corr_tokens = re.findall(r"\w+(?:'\w+)?|[.!?,;:]", item.correction or "")
+    matcher = difflib.SequenceMatcher(a=orig_tokens, b=corr_tokens)
+
+    synthesized: list[AiBreakdownGenerationItem] = []
+    for tag, i1, i2, j1, j2 in matcher.get_opcodes():
+        if tag == "equal":
+            continue
+        orig_seg = " ".join(orig_tokens[i1:i2]) if i1 < i2 else "(missing)"
+        corr_seg = " ".join(corr_tokens[j1:j2]) if j1 < j2 else "(removed)"
+        role = _infer_role(orig_seg, corr_seg)
+        if orig_seg == "(missing)":
+            exp = f"Added '{corr_seg}' ({role.lower()}) to complete the grammatical structure: {item.explanation}"
+        elif corr_seg == "(removed)":
+            exp = f"Removed '{orig_seg}' ({role.lower()}) for cleaner, non-redundant phrasing: {item.explanation}"
+        else:
+            exp = f"Changed '{orig_seg}' to '{corr_seg}' ({role.lower()}): {item.explanation}"
+        synthesized.append(
+            AiBreakdownGenerationItem(
+                original_part=orig_seg,
+                suggested_part=corr_seg,
+                part_of_speech=role,
+                explanation=exp,
+                rule_id=item.rule_id,
+            )
+        )
+
+    if not synthesized:
+        role = _infer_role(item.original, item.correction)
+        synthesized.append(
+            AiBreakdownGenerationItem(
+                original_part=item.original,
+                suggested_part=item.correction,
+                part_of_speech=role,
+                explanation=item.explanation,
+                rule_id=item.rule_id,
+            )
+        )
+
+    item.breakdown = synthesized
+    return item
+
+
 def _sanitize_mistakes(
     mistakes: list[AiMistakeGenerationItem],
     writing: str,
@@ -144,11 +234,13 @@ def _sanitize_mistakes(
 
     Sentence-level rewrites and word-level fixes can collide: if the model
     rewrites a whole sentence AND separately flags a word inside it, the
-    highlighter and build_corrected_text() can only apply one of them. This:
-      - drops items whose `original` isn't verbatim in the writing,
+    highlighter and build_corrected_text() can only apply one of them (and
+    the sentence item's `breakdown` already explains the individual words).
+    This:
+      - drops items whose `original` isn't verbatim in the writing (with a
+        whitespace-normalized fallback when line breaks differ),
       - drops no-op items (correction == original),
-      - resolves overlaps by keeping the LONGER span, since a sentence-level
-        rewrite is instructed to already include the smaller fixes,
+      - resolves overlaps by keeping the LONGER span,
       - returns items in reading order so the review pager follows the text.
     """
     if not writing:
@@ -169,6 +261,16 @@ def _sanitize_mistakes(
             if not any(s < ce and e > cs for cs, ce in claimed):
                 span = (s, e)
                 break
+
+        # Fallback if student text had newlines/multiple spaces normalized by the AI
+        if span is None and " " in orig:
+            flex_pat = re.sub(r"\\ ", r"\\s+", _span_pattern(orig))
+            for match in re.finditer(flex_pat, writing):
+                s, e = match.span()
+                if not any(s < ce and e > cs for cs, ce in claimed):
+                    span = (s, e)
+                    item.original = writing[s:e]
+                    break
 
         if span is None:
             logger.info("Dropping AI mistake not found verbatim or overlapping: %r", orig[:80])
@@ -213,7 +315,7 @@ class AiReviewService:
         self,
         contents: str,
         schema: type,
-        temperature: float = 0.3,
+        temperature: float = 0.25,
         max_retries: int = 2,
     ):
         """Call Gemini generate_content with automatic retry on transient errors (e.g. 503/429)."""
@@ -251,7 +353,7 @@ class AiReviewService:
         raise last_exception
 
     def review(self, request: ReviewRequest) -> ReviewResponse:
-        """Analyze writing using Gemini and return structured feedback."""
+        """Analyze writing using Gemini and return structured sentence + word breakdown feedback."""
         prompt = self._build_prompt(request)
 
         try:
@@ -318,8 +420,8 @@ class AiReviewService:
         )
 
     def _build_prompt(self, request: ReviewRequest) -> str:
-        """Build the multi-layer review prompt augmented with level guidance and relevant rules."""
-        retrieved_rules = rag_service.retrieve_for_text(request.writing, top_k=3)
+        """Build the structured sentence + word/POS review prompt augmented with RAG rules."""
+        retrieved_rules = rag_service.retrieve_for_text(request.writing, top_k=8)
         rag_section = rag_service.build_rag_prompt_section(retrieved_rules)
         level_guidance = DIFFICULTY_GUIDANCE.get(
             request.difficulty, DIFFICULTY_GUIDANCE["Intermediate"]
@@ -340,8 +442,9 @@ class AiReviewService:
 
         prompt_parts.extend([
             "---",
-            "Review every sentence at all four layers, then return your feedback and scores "
-            "as JSON matching the schema."
+            "Split the writing sentence by sentence, provide a complete natural suggestion for each "
+            "sentence that needs improvement, break down every word/part-of-speech/punctuation change "
+            "in `breakdown` with matching `rule_id`s, and return JSON matching the schema.",
         ])
 
         return "\n\n".join(prompt_parts)
@@ -352,13 +455,14 @@ class AiReviewService:
         token_usage: Optional[TokenUsage] = None,
         writing: Optional[str] = None,
     ) -> ReviewResponse:
-        """Parse, validate, sanitize spans, and RAG-enrich the AI response."""
+        """Parse, validate, sanitize spans, ensure word breakdowns, and RAG-enrich the AI response."""
         clean_text = _clean_json(response_text or "")
         data = json.loads(clean_text)
         validated = AiReviewGenerationResponse.model_validate(data)
         if writing:
             validated.mistakes = _sanitize_mistakes(validated.mistakes, writing)
-        # Ground mistakes with authoritative Merriam-Webster proof and attach token usage metrics
+        validated.mistakes = [_ensure_breakdown(m) for m in validated.mistakes]
+        # Ground both sentence mistakes and every word/POS/punctuation breakdown item with RAG proof
         return rag_service.enrich_review_response(validated, token_usage=token_usage)
 
     def _fallback_response(self, message: str) -> ReviewResponse:

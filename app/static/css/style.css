@@ -1247,3 +1247,230 @@ main.container {
     box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.25);
     background: #f8fafc;
 }
+
+/* ============================================================
+   Structured Sentence + Word / POS / Punctuation Breakdown
+   ============================================================ */
+
+.review-layout {
+    grid-template-columns: 0.92fr 1.08fr;
+}
+
+@media (max-width: 768px) {
+    .review-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+.rewrite-focus-panel {
+    margin-top: 1rem;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: var(--radius);
+    padding: 0.9rem 1.1rem;
+}
+
+.rewrite-focus-panel h3 {
+    font-size: 0.9rem;
+    color: #166534;
+    margin-bottom: 0.35rem;
+}
+
+.rewrite-focus-panel p {
+    font-size: 0.88rem;
+    color: #14532d;
+    line-height: 1.5;
+}
+
+.mistake-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 0.65rem;
+}
+
+.mistake-step-indicator {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+}
+
+.mistake-diff-panel {
+    background: #f8fafc;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    padding: 0.65rem 0.8rem;
+}
+
+.mistake-correction {
+    margin-bottom: 0;
+}
+
+.word-breakdown-section {
+    margin-top: 0.85rem;
+    border-top: 1px solid var(--color-border);
+    padding-top: 0.75rem;
+}
+
+.word-breakdown-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 0.6rem;
+}
+
+.word-breakdown-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--color-text);
+}
+
+.word-breakdown-count {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    background: #f1f5f9;
+    padding: 0.1rem 0.5rem;
+    border-radius: 999px;
+}
+
+.word-breakdown-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.breakdown-item {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 0.65rem 0.8rem;
+}
+
+.breakdown-item-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin-bottom: 0.35rem;
+}
+
+.breakdown-tokens {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    font-family: var(--font-mono, monospace);
+    font-size: 0.86rem;
+}
+
+.token-original {
+    color: #dc2626;
+    text-decoration: line-through;
+    font-weight: 600;
+}
+
+.token-arrow {
+    color: #94a3b8;
+    font-size: 0.8rem;
+}
+
+.token-suggested {
+    color: #15803d;
+    font-weight: 700;
+    background: #dcfce7;
+    padding: 0.05rem 0.35rem;
+    border-radius: 4px;
+}
+
+.token-kept {
+    color: #0f172a;
+    font-weight: 700;
+    background: #e2e8f0;
+    padding: 0.05rem 0.35rem;
+    border-radius: 4px;
+}
+
+.token-badge {
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+}
+
+.token-badge-added {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.token-badge-removed {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.token-badge-kept {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+.badge-pos {
+    background: #ede9fe;
+    color: #5b21b6;
+    border: 1px solid #ddd6fe;
+    font-size: 0.73rem;
+    font-weight: 700;
+    padding: 0.12rem 0.55rem;
+    border-radius: 999px;
+}
+
+.breakdown-explanation {
+    font-size: 0.85rem;
+    color: #334155;
+    line-height: 1.48;
+    margin: 0;
+}
+
+.breakdown-proof {
+    margin-top: 0.45rem;
+    padding-top: 0.45rem;
+    border-top: 1px dashed #cbd5e1;
+}
+
+.breakdown-proof .proof-header {
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.breakdown-proof .proof-text {
+    font-size: 0.78rem;
+    padding: 0.35rem 0.55rem;
+}
+
+/* POS chips inside floating RAG popover */
+.rag-proof-pos-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+}
+
+.rag-pos-chip {
+    background: #f5f3ff;
+    color: #5b21b6;
+    border: 1px solid #ddd6fe;
+    border-radius: 999px;
+    padding: 0.1rem 0.45rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+}
+
+.rag-pos-chip-more {
+    background: #f1f5f9;
+    color: #475569;
+    border-color: #cbd5e1;
+}

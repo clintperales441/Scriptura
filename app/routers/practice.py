@@ -65,6 +65,7 @@ def _session_to_template(session) -> dict:
                 "source_name": m.source_name,
                 "source_url": m.source_url,
                 "proof": m.proof,
+                "breakdown": m.breakdown,
             }
             for m in session.mistakes
         ],
